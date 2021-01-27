@@ -29,6 +29,7 @@ from os import mkdir
 from os import sep as os_sep
 from os.path import isdir, dirname
 from os.path import join as path_join
+from typing import Dict
 import platform
 import errno
 
@@ -37,13 +38,13 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 # The background is set with 40 plus the number of the color, and the foreground with 30
 
 # These are the sequences need to get colored ouput
-RESET_SEQ = "\033[0m"
-COLOR_SEQ = "\033[1;%dm"
-BOLD_SEQ = "\033[1m"
+RESET_SEQ: str = "\033[0m"
+COLOR_SEQ: str = "\033[1;%dm"
+BOLD_SEQ: str = "\033[1m"
 addLevelName(31, "OK")
 
 
-def formatter_message(message, use_color=True):
+def formatter_message(message: str, use_color: bool = True) -> str:
     """
     Create the colored message.
     :param message: The message which we want to write to console/file.
@@ -52,13 +53,13 @@ def formatter_message(message, use_color=True):
     """
 
     if use_color and "Windows" != platform.system():
-        message = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
+        message: str = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
     else:
-        message = message.replace("$RESET", "").replace("$BOLD", "")
+        message: str = message.replace("$RESET", "").replace("$BOLD", "")
     return message
 
 
-COLORS = {
+COLORS: Dict[str, int] = {
     "WARNING": YELLOW,
     "INFO": WHITE,
     "DEBUG": BLUE,
@@ -75,7 +76,7 @@ class ColoredFormatter(Formatter):
     This class passed the colored message to "original" logger module.
     """
 
-    def __init__(self, msg, use_color=True):
+    def __init__(self, msg: str, use_color: bool = True) -> None:
         """
         Init method of 'ColoredFormatter' class.
         :param msg: The getting message.
@@ -83,7 +84,7 @@ class ColoredFormatter(Formatter):
         """
 
         Formatter.__init__(self, msg)
-        self.use_color = use_color
+        self.use_color: bool = use_color
 
     def format(self, record):
         """
@@ -118,19 +119,25 @@ class ColoredLogger(Logger):
     It is inherited from 'logging.Logger' class.
     """
 
-    CONSOLE_FORMAT = (
+    CONSOLE_FORMAT: str = (
         "[$BOLD%(asctime)-20s$RESET][$BOLD%(name)-10s$RESET]"
         "[%(levelname)-18s]  %(message)-80s ($BOLD%(filename)s$RESET:%(lineno)d:%(funcName)s)"
     )
 
-    LOG_FILE_FORMAT = (
+    LOG_FILE_FORMAT: str = (
         "[%(asctime)-20s][%(name)-20s][%(levelname)-15s]  "
         "%(message)-100s (%(filename)s:%(lineno)d:%(funcName)s)"
     )
 
-    COLOR_FORMAT = formatter_message(CONSOLE_FORMAT, True)
+    COLOR_FORMAT: str = formatter_message(CONSOLE_FORMAT, True)
 
-    def __init__(self, name, log_file_path=None, console_level=INFO, file_level=DEBUG):
+    def __init__(
+        self,
+        name: str,
+        log_file_path: str = None,
+        console_level: int = INFO,
+        file_level: int = DEBUG,
+    ) -> None:
         """
         Init method of 'ColoredLogger' class.
         :param name: Name of logger.
@@ -142,10 +149,10 @@ class ColoredLogger(Logger):
 
         Logger.__init__(self, name)
 
-        color_formatter = ColoredFormatter(self.COLOR_FORMAT)
+        color_formatter: ColoredFormatter = ColoredFormatter(self.COLOR_FORMAT)
 
         if log_file_path:
-            log_folder_path = "{}".format(os_sep).join(log_file_path.split(os_sep)[0:-1])
+            log_folder_path: str = "{}".format(os_sep).join(log_file_path.split(os_sep)[0:-1])
             if not isdir(log_folder_path):
                 try:
                     mkdir(log_folder_path)
@@ -154,18 +161,20 @@ class ColoredLogger(Logger):
                         raise exc
                     pass
             # create file handler which logs even debug messages
-            log_file_formatter = ColoredFormatter(self.LOG_FILE_FORMAT, use_color=False)
-            fh = FileHandler(log_file_path, mode="w")
+            log_file_formatter: ColoredFormatter = ColoredFormatter(
+                self.LOG_FILE_FORMAT, use_color=False
+            )
+            fh: FileHandler = FileHandler(log_file_path, mode="w")
             fh.setLevel(file_level)
             fh.setFormatter(log_file_formatter)
             self.addHandler(fh)
 
-        console = StreamHandler()
+        console: StreamHandler = StreamHandler()
         console.setLevel(console_level)
         console.setFormatter(color_formatter)
         self.addHandler(console)
 
-    def ok(self, message, *args, **kwargs):
+    def ok(self, message: str, *args, **kwargs) -> None:
         """
         Adding a new colorized OK level to logger.
         :param message: Message on OK level
