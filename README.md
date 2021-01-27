@@ -1,5 +1,5 @@
 # detti DB
-Lightweight key-value DB
+Lightweight key-value DB.
 
 ## Badges:
 
