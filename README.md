@@ -1,2 +1,2 @@
-# detti_db
+# detti DB
 Lightweight key-value DB
