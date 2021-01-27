@@ -1,0 +1,19 @@
+- name: PythonFlake8Lint
+  # You may pin to the exact commit or the version.
+  # uses: py-actions/flake8@f6c1c0a6042a52ddcd52355cd8b53e3296740002
+  uses: py-actions/flake8@v1.1.0
+  with:
+    # Path to source file or directory (default='.')
+    path: # optional, default is .
+    # Boolean for pip upgrade prior to flake8 installation (default='false')
+    update-pip: # optional, default is false
+    # Comma delimited list of ignored flake8 rule codes (optional)
+    ignore: # optional, default is none
+    # Comma delimited list of excluded paths (optional)
+    exclude: # optional, default is none
+    # Integer value representing max acceptable line length (optional)
+    max-line-length: 100
+    # flake8 arguments for test execution (optional)
+    args: # optional, default is none
+    # The flake8 version for tests (optional, default='latest')
+    flake8-version: # optional, default is latest
