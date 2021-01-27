@@ -272,6 +272,7 @@ class DettiDB(object):
         def sigterm_handler(*args):
             if self.dump_thread:
                 self.dump_thread.join()
+            sys.exit(1)
 
         signal.signal(signal.SIGTERM, sigterm_handler)
         signal.signal(signal.SIGINT, sigterm_handler)
