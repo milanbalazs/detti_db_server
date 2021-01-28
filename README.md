@@ -1,6 +1,8 @@
 # detti DB and/or Server
 Lightweight Json based key-value DB and/or server.
 
+**The DB handles only strings (Dict[str, str]).**
+
 ## Badges
 
 ![PythonBlack](https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg)
@@ -202,13 +204,13 @@ day_limit = 432000
 
 ### Usage
 
-**Start the server**
+**Start the server:**
 
 ```bash
 >>> python3 detti_server.py
 ```
 
-**Output in case of successful starting (with the default config)**
+**Output in case of successful starting (with the default config):**
 
 ```
  * Serving Flask app "detti_server" (lazy loading)
@@ -222,7 +224,23 @@ day_limit = 432000
  * Debugger PIN: 217-599-780
 
 ```
-### End-points:
+### Test server status
+
+The server status can be checked to send a GET request to `/ping` end-point of the server.
+
+Response if the server is up and running:
+```bash
+>>> curl http://localhost:5000/ping
+> "PONG"
+```
+
+Response if the server is down (Status code: 7):
+```bash
+>>> curl http://localhost:5000/ping
+> curl: (7) Failed to connect to localhost port 5000: Kapcsolat elutasítva
+```
+
+### End-points
 
 **`/get/<string:db_key>`**
 

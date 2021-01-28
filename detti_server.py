@@ -79,7 +79,7 @@ class GetItem(Resource):
     @staticmethod
     def get(db_key: str) -> Union[Dict[str, str], tuple]:
         """
-        This get method provides the value of the key based on the end-point.
+        This get method provides the value of the key and the key itself in a dict.
         If the key doesn't exist in the DB, the method provides an error message
         with 201 status code.
         Eg.:
