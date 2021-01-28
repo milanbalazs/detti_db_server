@@ -40,7 +40,7 @@ from typing import Dict, Optional
 from threading import Thread
 
 # Get the path of the directory of the current file.
-PATH_OF_FILE_DIR: str = os.path.join(os.path.realpath(os.path.dirname(__file__)))
+PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
 
 # Append the path of the tools folder to find modules.
 sys.path.append(os.path.join(PATH_OF_FILE_DIR, "tools"))
@@ -49,7 +49,7 @@ sys.path.append(os.path.join(PATH_OF_FILE_DIR, "tools"))
 from color_logger import ColoredLogger  # noqa: E402
 
 # Set the default configuration file of the DB.
-DEFAULT_CONFIG: str = os.path.join(PATH_OF_FILE_DIR, "db_conf.ini")
+DEFAULT_CONFIG: str = os.path.join(PATH_OF_FILE_DIR, "detti_conf.ini")
 
 # Set-up the main logger instance.
 PATH_OF_LOG_FILE: str = os.path.join(PATH_OF_FILE_DIR, "logs", "main_log.log")
@@ -151,7 +151,7 @@ class DettiDB(object):
         :return: The value of the key as a string.
         """
 
-        self.c_logger.info("Starting to the the '{}' element.".format(db_key))
+        self.c_logger.info("Starting to get the '{}' element.".format(db_key))
 
         try:
             value_of_key: str = self.detti_db[db_key]
@@ -167,6 +167,21 @@ class DettiDB(object):
                 )
             )
             raise unexpected_error
+
+    def get_all(self) -> Dict[str, str]:
+        """
+        Providing the all elements from DB.
+        The method returns None if the DB is empty.
+        :return: The content of DB in dict or empty dict if the DB is empty.
+        """
+
+        self.c_logger.info("Starting to the get the all elements.")
+
+        if not self.detti_db:
+            self.c_logger.warning("The DB is empty")
+            return {}
+        self.c_logger.ok("The DB has content and it's returned.")
+        return self.detti_db
 
     def set(self, db_key: str, db_value: str) -> bool:
         """
@@ -234,7 +249,7 @@ class DettiDB(object):
             self.dump_thread.start()
             self.dump_thread.join()
 
-    def search_in_db(self, key_prefix: str) -> Dict[str, str]:
+    def search_keys_in_db(self, key_prefix: str) -> Dict[str, str]:
         """
         Searching the keys based on the provided prefix.
         The return list contains the matched keys and values in a dict
@@ -242,7 +257,7 @@ class DettiDB(object):
         :return: Dict[str, str] The found key-value pairs
         """
 
-        self.c_logger.info("Starting to search in DB based on '{}' prefix".format(key_prefix))
+        self.c_logger.info("Starting to search keys in DB based on '{}' prefix".format(key_prefix))
 
         return_dict: Dict[str, str] = {}
         key: str
@@ -251,11 +266,40 @@ class DettiDB(object):
         for key, value in self.detti_db.items():
             if key.startswith(key_prefix):
                 self.c_logger.debug(
-                    "Found key-value pair for '{}' prefix: {}:{}".format(key_prefix, key, value)
+                    "Found key-value pair for '{}' key prefix: {}:{}".format(key_prefix, key, value)
                 )
                 return_dict[key]: str = value
 
-        self.c_logger.ok("Successfully run the searching in the DB.")
+        self.c_logger.ok("Successfully run the key searching in the DB.")
+
+        return return_dict
+
+    def search_values_in_db(self, value_prefix: str) -> Dict[str, str]:
+        """
+        Searching the values based on the provided prefix.
+        The return list contains the matched keys and values in a dict
+        :param value_prefix: Prefix of the value
+        :return: Dict[str, str] The found key-value pairs
+        """
+
+        self.c_logger.info(
+            "Starting to search values in DB based on '{}' prefix".format(value_prefix)
+        )
+
+        return_dict: Dict[str, str] = {}
+        key: str
+        value: str
+
+        for key, value in self.detti_db.items():
+            if value.startswith(value_prefix):
+                self.c_logger.debug(
+                    "Found key-value pair for '{}' value prefix: {}:{}".format(
+                        value_prefix, key, value
+                    )
+                )
+                return_dict[key]: str = value
+
+        self.c_logger.ok("Successfully run the value searching in the DB.")
 
         return return_dict
 
@@ -284,4 +328,4 @@ if __name__ == "__main__":
     detti_db["as"] = "ppp"
     detti_db["teso"] = "uuuu"
     print(detti_db["test"])
-    print(detti_db.search_in_db("te"))
+    print(detti_db.search_keys_in_db("te"))
