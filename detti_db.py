@@ -51,6 +51,15 @@ from color_logger import ColoredLogger  # noqa: E402
 # Set the default configuration file of the DB.
 DEFAULT_CONFIG: str = os.path.join(PATH_OF_FILE_DIR, "detti_conf.ini")
 
+LOG_LEVELS: Dict[str, int] = {
+    "CRITICAL": 50,
+    "ERROR": 40,
+    "WARNING": 30,
+    "INFO": 20,
+    "DEBUG": 10,
+}
+
+
 # Set-up the main logger instance.
 PATH_OF_LOG_FILE: str = os.path.join(PATH_OF_FILE_DIR, "logs", "main_log.log")
 C_LOGGER: ColoredLogger = ColoredLogger(os.path.basename(__file__), log_file_path=PATH_OF_LOG_FILE)
@@ -93,14 +102,17 @@ class DettiDB(object):
         """
         return self.delete(key)
 
-    @staticmethod
-    def set_up_default_logger() -> ColoredLogger:
+    def set_up_default_logger(self) -> ColoredLogger:
         """
         Set up a default logger if it is not provided in instance.
         :return: ColoredLogger object
         """
 
-        return ColoredLogger(os.path.basename(__file__), log_file_path=PATH_OF_LOG_FILE)
+        return ColoredLogger(
+            os.path.basename(__file__),
+            console_level=LOG_LEVELS[self.config.get("DETTI_DB", "log_level")],
+            log_file_path=PATH_OF_LOG_FILE,
+        )
 
     def load_db(self) -> Dict[str, str]:
         """

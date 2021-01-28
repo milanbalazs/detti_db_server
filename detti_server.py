@@ -1,9 +1,47 @@
+"""
+Server for the Detti DB.
+
+End-points:
+    /get/<string:db_key>
+        Providing the key-value pair based on getting key. {key: value}
+    /set
+        Setting/updating key-value pair in the DB.
+        Eg.: >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
+    /search_key/<string:key_prefix>
+        Searching keys in the DB based on provided key prefix. {key: value, key: value}
+    /search_val/<string:value_prefix>
+        Searching values in the DB based on provided value prefix. {key: value, key: value}
+    /delete/<string:db_key>
+        Deleting an element from the DB.
+        Eg.: curl http://localhost:5000/delete/test_key -X DELETE
+    /ping
+        Checking if the server is running.
+    /getall
+        Providing all elements from the DB. {key: value, key: value}
+
+Limiter:
+    There is a limiter in the server to avoid the overload.
+    The request limit threshold can be set in the config file in different units.
+    Example:
+        >> curl http://localhost:5000/get/test_key
+        > "'test_key' key doesn't exist in DB."
+        ...
+        ...
+        >> curl http://localhost:5000/get/test_key
+        > {
+                "message": "5 per 1 minute"
+          }
+
+"""
+
 import os
 import sys
 import configparser
 from typing import Union, Optional, Dict
 from flask import Flask, request
 from flask_restful import Resource, Api
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # Get the path of the directory of the current file.
 PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
@@ -14,10 +52,23 @@ sys.path.append(PATH_OF_FILE_DIR)
 from detti_db import DettiDB  # noqa: E402
 
 detti_db: DettiDB = DettiDB()
+
 app: Flask = Flask(__name__)
 api: Api = Api(app)
+
 config: configparser.ConfigParser = configparser.ConfigParser()
 config.read(os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf.ini"))
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=[
+        "{} per day".format(config.get("SERVER", "day_limit")),
+        "{} per hour".format(config.get("SERVER", "hour_limit")),
+        "{} per minute".format(config.get("SERVER", "min_limit")),
+        "{} per second".format(config.get("SERVER", "sec_limit"))
+    ],
+)
 
 
 class GetItem(Resource):

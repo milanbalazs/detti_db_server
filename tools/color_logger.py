@@ -41,7 +41,7 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 RESET_SEQ: str = "\033[0m"
 COLOR_SEQ: str = "\033[1;%dm"
 BOLD_SEQ: str = "\033[1m"
-addLevelName(31, "OK")
+addLevelName(21, "OK")
 
 
 def formatter_message(message: str, use_color: bool = True) -> str:
@@ -183,8 +183,8 @@ class ColoredLogger(Logger):
         :return: None
         """
 
-        if self.isEnabledFor(31):
-            self._log(31, message, args, **kwargs)
+        if self.isEnabledFor(21):
+            self._log(21, message, args, **kwargs)
 
 
 ####
