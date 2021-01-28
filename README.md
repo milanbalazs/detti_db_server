@@ -359,3 +359,7 @@ Example:
 ```
 
 ## Future
+ - Creating PyPi package
+   - The package can be installed by `pip`
+ - Introduce the multithreading/multiprocessing in searching methods
+   - In case of big data the multithreading/multiprocessing can reduce the execution time
