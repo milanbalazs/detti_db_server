@@ -237,7 +237,7 @@ Example:
 >>> curl http://localhost:5000/get/doesnt_exist
 > "'doesnt_exist' key doesn't exist in DB."
 ```
-
+---
 **`/set`**
 
 Setting/updating key-value pair in the DB.
@@ -249,7 +249,7 @@ Example:
 >>> curl http://localhost:5000/get/test_key
 > "test_val"
 ```
-
+---
 **`/search_key/<string:key_prefix>`**
 
 Searching keys in the DB based on provided key prefix.
@@ -270,7 +270,7 @@ Example:
 >>> curl http://localhost:5000/search_key/not_exist
 >"Cannot find keys based on 'not_exist' prefix"
 ```
-
+---
 **`/search_val/<string:value_prefix>`**
 
 Searching values in the DB based on provided value prefix.
@@ -291,7 +291,7 @@ Example:
 >>> curl http://localhost:5000/search_val/not_exist
 > "Cannot find values based on 'not_exist' prefix"
 ```
-
+---
 **`/delete/<string:db_key>`**
 
 Deleting an element from the DB.
@@ -307,7 +307,7 @@ Example:
 >> curl http://localhost:5000/get/test_key
 > "'test_key' key doesn't exist in DB."
 ```
-
+---
 **`/ping`**
 
 Checking if the server is running.
@@ -322,7 +322,7 @@ Failed example (Status code: 7):
 >>> curl http://localhost:5000/ping
 > curl: (7) Failed to connect to localhost port 5000: Kapcsolat elutasítva
 ```
-
+---
 **`/getall`**
 
 Providing all elements from the DB. {key: value, key: value}
