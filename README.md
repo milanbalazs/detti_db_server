@@ -38,6 +38,10 @@ Lightweight Json based key-value DB and/or server.
 **Requirements:**
  - Interpreter
    - Python3.6.x <
+   
+ - Python packages
+   - They can find in the requirements.txt file ([pipreqs](https://github.com/bndr/pipreqs)).
+   - The required packages can be installed with `pip`.
 
 **Tested system:**
  - Interpreter:

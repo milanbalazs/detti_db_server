@@ -66,7 +66,7 @@ limiter = Limiter(
         "{} per day".format(config.get("SERVER", "day_limit")),
         "{} per hour".format(config.get("SERVER", "hour_limit")),
         "{} per minute".format(config.get("SERVER", "min_limit")),
-        "{} per second".format(config.get("SERVER", "sec_limit"))
+        "{} per second".format(config.get("SERVER", "sec_limit")),
     ],
 )
 
