@@ -1,5 +1,5 @@
 # detti DB
-Lightweight Json based key-value DB.
+Lightweight Json based key-value DB and/or Server.
 
 ## Badges:
 
