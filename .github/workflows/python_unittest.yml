@@ -32,4 +32,4 @@ jobs:
 
     # Runs the Python Style checker
     - name: Python Unit Test
-      run: coverage --parallel-mode -m unittest discover -s test -v
+      run: coverage run -m unittest discover -s test -v
