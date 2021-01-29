@@ -36,6 +36,7 @@ import sys
 import configparser
 import json
 import signal
+import errno
 from typing import Dict, Optional
 from threading import Thread
 
@@ -114,6 +115,22 @@ class DettiDB(object):
             log_file_path=PATH_OF_LOG_FILE,
         )
 
+    def __creating_dir_structure_for_file(self, path_of_file: str) -> None:
+        """
+        Creating directory structure for a file if it is not existing.
+        :return: None
+        """
+
+        self.c_logger.info("Starting to check if the directory structure exists.")
+
+        if not os.path.exists(os.path.dirname(path_of_file)):
+            self.c_logger.warning("The directory structure of provided DB file doesn't exist")
+            self.c_logger.info("Starting to try to creating the directory structure of DB file.")
+            os.makedirs(os.path.dirname(path_of_file), exist_ok=True)
+            self.c_logger.ok("Successfully created the directory structure of DB file.")
+        else:
+            self.c_logger.ok("The directory structure of DB file exist.")
+
     def load_db(self) -> Dict[str, str]:
         """
         Loading the DB based on the provided confing file.
@@ -126,6 +143,8 @@ class DettiDB(object):
 
         if not os.path.isfile(self.path_of_db):
             self.c_logger.warning("The '{}' DB file doesn't exist.".format(self.path_of_db))
+            # Creating the directory structure in it is not existing
+            self.__creating_dir_structure_for_file(self.path_of_db)
             # Creating new DB if it is not exist
             with open(self.path_of_db, "w"):
                 # Only the owner has permissions for DB file
@@ -248,6 +267,19 @@ class DettiDB(object):
         self.dump_json()
         self.c_logger.ok("The '{}' item has been removed successfully from DB.".format(db_key))
         return True
+
+    def _clear_db(self) -> None:
+        """
+        It is a really dangerous method.
+        This method clears the complete DB.
+        ALL DATA WILL BE DELETED FROM DB AND IT IS NOT REVOCABLE!
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info("Starting to clear the complete DB")
+        self.detti_db: dict = {}
+        self.dump_json()
+        self.c_logger.ok("The DB has been cleared successfully.")
 
     def dump_json(self) -> None:
         """

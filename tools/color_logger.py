@@ -52,7 +52,8 @@ def formatter_message(message: str, use_color: bool = True) -> str:
     :return: Formatted message.
     """
 
-    if use_color and "Windows" != platform.system():
+    # Windows compatibility option.
+    if use_color and "Windows" != platform.system():  # pragma: no cover
         message: str = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
     else:
         message: str = message.replace("$RESET", "").replace("$BOLD", "")
@@ -164,7 +165,7 @@ class ColoredLogger(Logger):
             log_file_formatter: ColoredFormatter = ColoredFormatter(
                 self.LOG_FILE_FORMAT, use_color=False
             )
-            fh: FileHandler = FileHandler(log_file_path, mode="w")
+            fh: FileHandler = FileHandler(log_file_path, mode="w", delay=True)
             fh.setLevel(file_level)
             fh.setFormatter(log_file_formatter)
             self.addHandler(fh)

@@ -23,7 +23,7 @@ jobs:
     - name: Install Python 3
       uses: actions/setup-python@v1
       with:
-        python-version: 3.6
+        python-version: 3.6.9
 
     - name: Install dependencies
       run: |
@@ -32,4 +32,8 @@ jobs:
 
     # Runs the Python Style checker
     - name: Python Unit Test
-      run: coverage run --parallel-mode -m unittest discover -s test -v
+      run: |
+        coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut.py -v
+        coverage combine --rcfile=.coverage_rc
+        coverage xml --rcfile=.coverage_rc
+        coverage html --rcfile=.coverage_rc
