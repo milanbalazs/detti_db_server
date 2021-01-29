@@ -37,11 +37,14 @@ Limiter:
 import os
 import sys
 import configparser
-from typing import Union, Optional, Dict
+from functools import wraps
+from typing import Union, Optional, Dict, List
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_jwt import JWT, jwt_required, current_identity
+from werkzeug.security import safe_str_cmp
 
 # Get the path of the directory of the current file.
 PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
@@ -56,7 +59,7 @@ detti_db: DettiDB = DettiDB()
 app: Flask = Flask(__name__)
 api: Api = Api(app)
 
-config: configparser.ConfigParser = configparser.ConfigParser()
+config: configparser.ConfigParser = configparser.ConfigParser(allow_no_value=True)
 config.read(os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf.ini"))
 
 limiter = Limiter(
@@ -71,10 +74,112 @@ limiter = Limiter(
 )
 
 
+class User(object):
+    """
+    This class works as a data collector for the registered users.
+    Basically the User/Password pairs come from the config file.
+    If the User/Password pair is not set in the config file the Auth is not needed.
+    """
+
+    def __init__(self, user_id: int, username: str, password: str) -> None:
+        """
+        Init method of 'User' class.
+        :param user_id: Id of the registered user.
+        :param username: Name of the user.
+        :param password: Password of the user.
+        """
+
+        self.id: int = user_id
+        self.username: str = username
+        self.password: str = password
+
+    def __str__(self) -> str:
+        """
+        Return the User ID.
+        :return: User ID as a string.
+        """
+
+        return "User(id='{}')".format(self.id)
+
+
+# More users can be registred if it is needed.
+# Current only one user is possible and the credentials comes from the config file.
+# In default the Auth it not needed. Please be careful to set it!
+users: List[User] = [
+    User(1, config.get("SERVER", "user"), config.get("SERVER", "password"))
+]
+
+username_table: dict = {u.username: u for u in users}
+userid_table: dict = {u.id: u for u in users}
+app.config["SECRET_KEY"] = "super-secret"
+
+
+def authenticate(username: str, password: str) -> User:
+    """
+    Authentication function.
+    This function is passed to JWT object as authentication header.
+    :param username: Name of the user as a string.
+    :param password: Password of the user as a string.
+    :return: Return the User object.
+    """
+
+    user: User = username_table.get(username, None)
+    if user and safe_str_cmp(user.password.encode("utf-8"), password.encode("utf-8")):
+        return user
+
+
+def identity(payload: dict) -> Optional[int]:
+    """
+    Identity handler function.
+    This function is passed to JWT object as identity handler.
+    :param payload: Payload of request.
+    :return: ID of the user or None if the user is not in the table.
+    """
+
+    user_id = payload["identity"]
+    return userid_table.get(user_id, None)
+
+
+jwt: JWT = JWT(app, authenticate, identity)
+
+
+def checkuser(func):
+    """
+    Global decorator to check the user authentication in the RESTFUL API Classes.
+    :param func: Reference of the decorated function.
+    :return: Return the reference of the inner function.
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        """
+        Inner function of the global decorator.
+        This inner wrapper function calls the decorated function/method and handles the parameters.
+        :param args: Arguments of the decorated function/method.
+        :param kwargs: Keyword-arguments of the decorated function/method.
+        :return: Return the called decorated function or abort with 401 status-code.
+        """
+
+        if current_identity.username in username_table.keys():
+            return func(*args, **kwargs)
+        return abort(401)
+
+    return wrapper
+
+
+DECORATORS = (
+    [checkuser, jwt_required()]
+    if (config.get("SERVER", "user") and config.get("SERVER", "password"))
+    else []
+)
+
+
 class GetItem(Resource):
     """
     This class contains the all GET related implementations.
     """
+
+    decorators = DECORATORS
 
     @staticmethod
     def get(db_key: str) -> Union[Dict[str, str], tuple]:
@@ -103,6 +208,8 @@ class SetItem(Resource):
     This class contains the all value setting in DB related implementations.
     """
 
+    decorators = DECORATORS
+
     @staticmethod
     def put() -> str:
         """
@@ -128,6 +235,8 @@ class SearchKeys(Resource):
     """
     This class contains the all searching in DB related implementations.
     """
+
+    decorators = DECORATORS
 
     @staticmethod
     def get(key_prefix: str) -> Union[tuple, Dict[str, str]]:
@@ -165,6 +274,8 @@ class SearchValues(Resource):
     This class contains the all value searching in DB related implementations.
     """
 
+    decorators = DECORATORS
+
     @staticmethod
     def get(value_prefix: str) -> Union[tuple, Dict[str, str]]:
         """
@@ -201,6 +312,8 @@ class DeleteItem(Resource):
     This class contains the all deleting from DB related implementations.
     """
 
+    decorators = DECORATORS
+
     @staticmethod
     def delete(db_key: str) -> str:
         """
@@ -228,6 +341,8 @@ class PingServer(Resource):
     This class contains the server ping related implementations.
     """
 
+    decorators = DECORATORS
+
     @staticmethod
     def get() -> str:
         """
@@ -250,6 +365,8 @@ class GetAll(Resource):
     """
     This class contains the get all elements implementations.
     """
+
+    decorators = DECORATORS
 
     @staticmethod
     def get() -> Dict[str, str]:
