@@ -12,7 +12,7 @@ Lightweight Json based key-value DB and/or server.
 ![PythonBlack](https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg)
 ![PythonStyle](https://github.com/milanbalazs/detti_db/workflows/PythonStyle/badge.svg)
 ![PythonUnitTest](https://github.com/milanbalazs/detti_db/workflows/PythonUnitTest/badge.svg)
-
+[![Coverage Status](https://coveralls.io/repos/github/milanbalazs/detti_db_server/badge.svg)](https://coveralls.io/github/milanbalazs/detti_db_server)
 ## Create an environment
 
 **Create a project folder and a venv folder within:**
