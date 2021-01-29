@@ -74,7 +74,7 @@ The configuration file is a standard [INI file format](https://en.wikipedia.org/
 ```ini
 [DETTI_DB]
 # Path of the DB file. Recommended to define full path.
-path_of_db = /home/user/test.db
+path_of_db = test.db
 # Maximum length of the keys in DB (Avoid memory overload).
 len_of_key = 100
 # Maximum length of the values in DB (Avoid memory overload).

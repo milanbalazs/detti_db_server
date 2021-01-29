@@ -4,7 +4,7 @@ import os
 
 sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), ".."))
 
-from detti_db import DettiDB
+from detti_db import DettiDB  # noqa: E402
 
 
 class DettiDBTestCases(unittest.TestCase):
