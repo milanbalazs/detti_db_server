@@ -5,7 +5,7 @@ Lightweight Json based key-value DB and/or server.
    - Small, Fast, Easy, Funny :trollface:
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
-**The DB handles only strings (Dict[str, str]).**
+**The DB handles only strings as key and value (`Dict[str, str]`).**
 
 ## Badges
 
@@ -369,7 +369,7 @@ Example:
 ### JWT Authentication
 
 Official page of JWT:
- - [JSON Web Tokens](https://jwt.io/introduction)
+ - [JSON Web Tokens](https://jwt.io)
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
 **Important:**
