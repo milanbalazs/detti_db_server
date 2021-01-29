@@ -105,9 +105,7 @@ class User(object):
 # More users can be registred if it is needed.
 # Current only one user is possible and the credentials comes from the config file.
 # In default the Auth it not needed. Please be careful to set it!
-users: List[User] = [
-    User(1, config.get("SERVER", "user"), config.get("SERVER", "password"))
-]
+users: List[User] = [User(1, config.get("SERVER", "user"), config.get("SERVER", "password"))]
 
 username_table: dict = {u.username: u for u in users}
 userid_table: dict = {u.id: u for u in users}
