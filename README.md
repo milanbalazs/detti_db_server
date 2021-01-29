@@ -1,6 +1,10 @@
 # detti DB and/or Server
 Lightweight Json based key-value DB and/or server.
 
+ - Why:
+   - Small, Fast, Easy, Funny :trollface:
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
 **The DB handles only strings (Dict[str, str]).**
 
 ## Badges

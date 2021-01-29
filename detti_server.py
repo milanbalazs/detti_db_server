@@ -31,7 +31,9 @@ Limiter:
         > {
                 "message": "5 per 1 minute"
           }
-
+Note:
+    The very basic skeleton of JWT Auth got from the following SO answer:
+        https://stackoverflow.com/a/36169320/11502612
 """
 
 import os
