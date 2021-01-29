@@ -23,4 +23,4 @@ jobs:
     - name: Black Code Formatter
       uses: lgeiger/black-action@master
       with:
-          args: ". --check -l 100 -v --diff"
+          args: "-l 100 --check --diff --color -v -t py36 ."
