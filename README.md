@@ -178,7 +178,7 @@ test_val_2
 
 ```
 
-## detti Server
+## detti Server (with RESTful API)
 
 ### Configuration
 
@@ -199,6 +199,10 @@ sec_limit = 5
 min_limit = 300
 hour_limit = 18000
 day_limit = 432000
+# IMPORTANT
+# If you set the user and password parameter the DB will be accessed with JWT Token!
+user =
+password =
 ```
 **Note:**
  - The default `detti_conf.ini` file contains more sections but the `SERVER` and `DETTI_DB` 
@@ -244,7 +248,7 @@ Response if the server is down (Status code: 7):
 > curl: (7) Failed to connect to localhost port 5000: Kapcsolat elutasítva
 ```
 
-### End-points
+### End-points (RESTful APIs)
 
 **`/get/<string:db_key>`**
 
@@ -359,6 +363,50 @@ Example:
 > {
         "test_key": "test_val",
         "test_key_1": "test_val_1"
+  }
+```
+
+### JWT Authentication
+
+Official page of JWT:
+ - [JSON Web Tokens](https://jwt.io/introduction)
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
+**Important:**
+ - The JWT authentication is not active with the default configuration.
+
+The "user" and "password" parameters have to be set in the configuration file
+to activate the JWT Authentication.
+
+**For example:**
+```ini
+user = test_user
+password = test_password
+```
+
+**Get the token from the server:**
+```bash
+>>> curl -i -X POST -H "Content-Type: application/json" -d '{"username":"test_user","password":"test_password"}' http://localhost:5000/auth
+> {
+      "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTE4...
+  }
+```
+
+**Use the JWT authentication for APIs:**
+```bash
+>>> curl -H "Authorization: jwt eyJ0eXAiOiJKV..." http://localhost:5000/get/exist
+> {
+      "exist": "exist_val"
+  }
+```
+
+**If the token is not used, the APIs provide error message with 401 status code:**
+```bash
+>>> curl http://localhost:5000/get/exist
+> {
+      "description": "Request does not contain an access token",
+      "error": "Authorization Required",
+      "status_code": 401
   }
 ```
 

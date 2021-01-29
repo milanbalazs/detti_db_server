@@ -31,6 +31,30 @@ Limiter:
         > {
                 "message": "5 per 1 minute"
           }
+
+JWT authentications:
+    It is active if the "user" and "password" parameters are set in the config file.
+    It is a token based authentication.
+    You should send a request with the user and password to the /auth end-point.
+    Example:
+        Get the token:
+            >> curl -i -X POST -H "Content-Type: application/json"
+                -d '{"username":"test_user","password":"test_password"}' http://localhost:5000/auth
+            > {
+                    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTE4...
+              }
+        Use the token:
+            >> curl -H "Authorization: jwt eyJ0eXAiOiJKV..." http://localhost:5000/get/exist
+            > "exist_val"
+    If the JWT authentication is active but you don't use the token, the DB won't be accessed
+    Example:
+        >> curl http://localhost:5000/get/exist
+        > {
+                "description": "Request does not contain an access token",
+                "error": "Authorization Required",
+                "status_code": 401
+          }
+
 Note:
     The very basic skeleton of JWT Auth got from the following SO answer:
         https://stackoverflow.com/a/36169320/11502612
@@ -111,7 +135,7 @@ users: List[User] = [User(1, config.get("SERVER", "user"), config.get("SERVER", 
 
 username_table: dict = {u.username: u for u in users}
 userid_table: dict = {u.id: u for u in users}
-app.config["SECRET_KEY"] = "super-secret"
+app.config["SECRET_KEY"] = "detti_db_server_super_secret_key"
 
 
 def authenticate(username: str, password: str) -> User:
