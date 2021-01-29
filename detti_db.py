@@ -36,7 +36,6 @@ import sys
 import configparser
 import json
 import signal
-import errno
 from typing import Dict, Optional
 from threading import Thread
 
@@ -191,7 +190,7 @@ class DettiDB(object):
         except KeyError:
             self.c_logger.warning("The '{}' key doesn't exist in the DB.".format(db_key))
             return None
-        except Exception as unexpected_error:
+        except Exception as unexpected_error:  # pragma: no cover
             self.c_logger.error(
                 "Unexpected error happened during the get an element. ERROR:\n{}".format(
                     unexpected_error
@@ -357,7 +356,7 @@ class DettiDB(object):
 
         self.c_logger.debug("Starting to setup the Signal handler.")
 
-        def sigterm_handler(*args):
+        def sigterm_handler(*args):  # pragma: no cover
             if self.dump_thread:
                 self.dump_thread.join()
             sys.exit(1)

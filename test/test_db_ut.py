@@ -12,7 +12,15 @@ from detti_db import DettiDB  # noqa: E402
 
 
 def mock_value_error(*args, **kwargs):
-    raise ValueError("Test exception")
+    raise ValueError("ValueError Test exception")
+
+
+def mock_runtime_error(*args, **kwargs):
+    raise RuntimeError("RuntimeError Test exception")
+
+
+def mock_key_error(*args, **kwargs):
+    raise KeyError("KeyError Test exception")
 
 
 class DettiDBTestCases(unittest.TestCase):
@@ -63,9 +71,9 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db["test_key"] = 18
         self.assertIsNone(self.detti_db["test_key"])
 
-    def test_load_db_non_exit_db_creation(self) -> None:
+    def test_load_db(self) -> None:
         """
-        Testing the non-exist DB creation in "load_db" method.
+        Testing the complete "load_db" method.
         :return: None
         """
 
@@ -87,13 +95,106 @@ class DettiDBTestCases(unittest.TestCase):
         # Empty DB should return empty dict
         self.assertEqual(self.detti_db.load_db(), {})
 
-        original_json_load: json.load = json.load
-        json.load = mock_value_error
+        not_exist_db: str = "does/not/exist/data_base_2.db"
+        self.detti_db.path_of_db = not_exist_db
+        # The method should return an empty dist
+        self.assertEqual(self.detti_db.load_db(), {})
+
+        # Put element to the DB
         self.detti_db["test_key"] = "test_val"
 
-        with self.assertRaises(ValueError) as value_error:
-            self.detti_db.load_db()
-            self.assertTrue("Test exception" in str(value_error))
+        original_json_load: json.load = json.load
+        json.load = mock_value_error
 
+        with self.assertRaises(ValueError) as runtime_error:
+            self.detti_db.load_db()
+            self.assertTrue("ValueError Test exception" in str(runtime_error))
+
+        json.load = mock_runtime_error
+
+        with self.assertRaises(RuntimeError) as value_error:
+            self.detti_db.load_db()
+            self.assertTrue("RuntimeError Test exception" in str(value_error))
+
+        json.load = original_json_load
         self.detti_db.path_of_db = original_path_of_db
         shutil.rmtree("does")
+
+    def test_get(self) -> None:
+        """
+        Testing the get method.
+        It is also called from __getitem__ method.
+        :return: None
+        """
+
+        self.assertIsNone(self.detti_db.get("not_exist"))
+
+    def test_get_all(self) -> None:
+        """
+        Testing the non-exist DB creation in "load_db" method.
+        :return: None
+        """
+
+        # Testing the return value of an empty DB.
+        self.assertEqual(self.detti_db.get_all(), {})
+
+        # Testing the return value of an NON empty DB.
+        self.detti_db["test_var"]: str = "test_val"
+        self.assertEqual(self.detti_db.get_all(), {"test_var": "test_val"})
+
+    def test_set(self) -> None:
+        """
+        Testing the set method.
+        It is also called from __setitem__ method.
+        :return: None
+        """
+
+        # Testing the too long value
+        self.assertFalse(self.detti_db.set("test_value", "x" * 101))
+
+        # Testing the too long key
+        self.assertFalse(self.detti_db.set("x" * 101, "test_val"))
+
+    def test_delete(self) -> None:
+        """
+        Testing the delete method.
+        It is also called from __delitem__ method.
+        :return: None
+        """
+
+        # Testing if a key is not in the DB
+        self.assertFalse(self.detti_db.delete("not_exist_key"))
+
+    def test_search_keys_in_db(self) -> None:
+        """
+        Testing the "search_keys_in_db" method.
+        :return: None
+        """
+
+        self.detti_db["test_key"] = "test_val"
+        self.detti_db["prod_key_1"] = "prod_val_1"
+        self.detti_db["prod_key_2"] = "prod_val_2"
+
+        self.assertEqual(
+            self.detti_db.search_keys_in_db("prod_"),
+            {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"},
+        )
+
+    def test_search_values_in_db(self) -> None:
+        """
+        Testing the "search_values_in_db" method.
+        :return: None
+        """
+
+        self.detti_db["test_key"] = "test_val"
+        self.detti_db["prod_key_1"] = "prod_val_1"
+        self.detti_db["prod_key_2"] = "prod_val_2"
+
+        self.assertEqual(
+            self.detti_db.search_values_in_db("prod_"),
+            {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"},
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
