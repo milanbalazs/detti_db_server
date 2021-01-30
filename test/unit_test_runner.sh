@@ -1,14 +1,14 @@
 #!/bin/bash
 
 
-### CONFIGURATION ###
+# Set global parameters
 SCRIPT_FULL_PATH=$(readlink -f "${0}")
 SCRIPT_DIR="${SCRIPT_FULL_PATH%/*}"
+readonly VENV_PATH="${SCRIPT_DIR}/../venv"
 
+# Print debug variables
 echo "[DEBUG] - SCRIPT_FULL_PATH=${SCRIPT_FULL_PATH}"
 echo "[DEBUG] - SCRIPT_DIR=${SCRIPT_DIR}"
-
-readonly VENV_PATH="${SCRIPT_DIR}/../venv"
 
 echo "[INFO] - Starting to check the status of Python virtual environment."
 if [[ ! -d "${VENV_PATH}" ]]; then
@@ -27,7 +27,7 @@ if ! source "${VENV_PATH}/bin/activate"; then
     exit 1
 fi
 
-echo "[INFO] - Python executable path:"
+echo "[INFO] - Used Python executable path:"
 which python
 
 echo "[INFO] - Starting to install the required packages in the Python virtual environment"
@@ -37,7 +37,7 @@ if ! pip install -r "${VENV_PATH}/../requirements.txt"; then
 fi
 
 echo "[INFO] - Start to run the UnitTests and the coverage"
-coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut.py -v
-coverage combine --rcfile=.coverage_rc
-coverage xml --rcfile=.coverage_rc
-coverage html --rcfile=.coverage_rc
+coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut.py -v || { echo "[ERROR] - Failed 'coverage run'" 1>&2; exit 1; }
+coverage combine --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage combine'" 1>&2; exit 1; }
+coverage xml --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage xml'" 1>&2; exit 1; }
+coverage html --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage html'" 1>&2; exit 1; }
