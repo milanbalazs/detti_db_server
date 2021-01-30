@@ -75,6 +75,8 @@ class DettiServerTestCases(unittest.TestCase):
     def test_get_not_exist_element(self) -> None:
         """
         Testing when the requested element is not in DB.
+        End-point(s):
+            /get/<string:db_key>
         :return: None
         """
 
@@ -85,6 +87,9 @@ class DettiServerTestCases(unittest.TestCase):
     def test_set_get_exist_element(self) -> None:
         """
         Testing when put an element to DB and the requested element is in DB.
+        End-point(s):
+            /set
+            /get/<string:db_key>
         :return: None
         """
 
@@ -104,6 +109,8 @@ class DettiServerTestCases(unittest.TestCase):
         IMPORTANT:
             If the data type is not valid the PUT won't be failed.
             It can convert almost everything to string!
+        End-point(s):
+            /set
         :return: None
         """
 
@@ -142,3 +149,49 @@ class DettiServerTestCases(unittest.TestCase):
         resp: requests.models.Response = requests.get("http://localhost:5000/get/dict_data")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json(), {"dict_data": "inner_dict_key"})
+
+    def test_ping(self) -> None:
+        """
+        Testing the ping to server.
+        If the server is up and running the end-point should return "PONG" with 200 status code.
+        If the server is down the user will get a connection error.
+        End-point(s):
+            /ping
+        :return: None
+        """
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/ping")
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue("PONG" in resp.text)
+
+    @unittest.skip("It has to be fixed. It failed with 429 status code")
+    def test_search_key(self) -> None:
+        """
+        Searching keys in the DB based on provided key prefix.
+        End-point(s):
+            /search_key/<string:key_prefix>
+        :return: None
+        """
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"dev_data": "dev"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"prod_data_1": "prod_1"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"prod_data_2": "prod_data_2"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/search_key/prod_")
+        self.assertEqual(resp.status_code, 200)
+        print("kkkkk", resp.json())
+        # self.assertTrue("PONG" in resp.text)
