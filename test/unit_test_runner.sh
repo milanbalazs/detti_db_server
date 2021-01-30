@@ -37,7 +37,7 @@ if ! pip install -r "${VENV_PATH}/../requirements.txt"; then
 fi
 
 echo "[INFO] - Start to run the UnitTests and the coverage"
-coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut.py -v || { echo "[ERROR] - Failed 'coverage run'" 1>&2; exit 1; }
+coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut*.py -v || { echo "[ERROR] - Failed 'coverage run'" 1>&2; exit 1; }
 coverage combine --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage combine'" 1>&2; exit 1; }
 coverage xml --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage xml'" 1>&2; exit 1; }
 coverage html --rcfile=.coverage_rc || { echo "[ERROR] - Failed 'coverage html'" 1>&2; exit 1; }
