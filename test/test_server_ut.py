@@ -50,9 +50,7 @@ class DettiServerTestCases(unittest.TestCase):
         """
 
         config: configparser.ConfigParser = configparser.ConfigParser(allow_no_value=True)
-        config.read(os.path.join(
-            os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini"
-        ))
+        config.read(os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini"))
         db_file_path: str = config.get("DETTI_DB", "path_of_db")
         if os.path.isfile(db_file_path):
             os.remove(db_file_path)
