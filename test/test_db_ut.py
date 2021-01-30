@@ -33,7 +33,11 @@ class DettiDBTestCases(unittest.TestCase):
         # Show the complete diff in case of error
         self.maxDiff: Optional[int] = None
         # The "set_up_default_logger" is tested with this instance creation.
-        self.detti_db: DettiDB = DettiDB()
+        self.detti_db: DettiDB = DettiDB(
+            config_file=os.path.join(
+                os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini"
+            )
+        )
 
     def setUp(self) -> None:
         """
@@ -52,6 +56,7 @@ class DettiDBTestCases(unittest.TestCase):
         """
 
         self.detti_db._clear_db()
+        os.remove(self.detti_db.path_of_db)
 
     def test_magic_methods(self) -> None:
         """

@@ -132,3 +132,4 @@ dmypy.json
 # Unique
 logs/*.log
 .idea
+test.db

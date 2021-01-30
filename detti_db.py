@@ -69,7 +69,7 @@ class DettiDB(object):
     def __init__(self, config_file: str = DEFAULT_CONFIG, c_logger: ColoredLogger = None) -> None:
         self.config: configparser.ConfigParser = configparser.ConfigParser()
         self.config.read(config_file)
-        self.path_of_db: str = self.config.get("DETTI_DB", "path_of_db")
+        self.path_of_db: str = os.path.abspath(self.config.get("DETTI_DB", "path_of_db"))
         self.c_logger: ColoredLogger = c_logger if c_logger else self.set_up_default_logger()
         self.set_signal_handler()
         self.detti_db: Dict[str, str] = self.load_db()
@@ -122,7 +122,7 @@ class DettiDB(object):
 
         self.c_logger.info("Starting to check if the directory structure exists.")
 
-        if not os.path.exists(os.path.dirname(path_of_file)):
+        if not os.path.exists(os.path.dirname(path_of_file)) and os.path.dirname(path_of_file):
             self.c_logger.warning("The directory structure of provided DB file doesn't exist")
             self.c_logger.info("Starting to try to creating the directory structure of DB file.")
             os.makedirs(os.path.dirname(path_of_file), exist_ok=True)
