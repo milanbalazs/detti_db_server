@@ -56,7 +56,8 @@ class DettiDBTestCases(unittest.TestCase):
         """
 
         self.detti_db._clear_db()
-        os.remove(self.detti_db.path_of_db)
+        if os.path.isfile(self.detti_db.path_of_db):
+            os.remove(self.detti_db.path_of_db)
 
     def test_magic_methods(self) -> None:
         """

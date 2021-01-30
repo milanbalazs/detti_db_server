@@ -60,6 +60,7 @@ Note:
         https://stackoverflow.com/a/36169320/11502612
 """
 
+import argparse
 import os
 import sys
 import configparser
@@ -80,13 +81,28 @@ sys.path.append(PATH_OF_FILE_DIR)
 
 from detti_db import DettiDB  # noqa: E402
 
-detti_db: DettiDB = DettiDB()
-
 app: Flask = Flask(__name__)
 api: Api = Api(app)
 
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description=__doc__)
+
+parser.add_argument(
+    "--config_file",
+    dest="config_file",
+    type=str,
+    help="Force to use a config file. Default: detti_conf.ini (In root folder)",
+    required=False,
+    default=os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf.ini"),
+)
+
+input_parameters, unknown_input_parameters = parser.parse_known_args()
+if unknown_input_parameters:
+    print("[WARN] - Unknown/Unused input parameters: {}".format(unknown_input_parameters))
+
 config: configparser.ConfigParser = configparser.ConfigParser(allow_no_value=True)
-config.read(os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf.ini"))
+config.read(input_parameters.config_file)
+
+detti_db: DettiDB = DettiDB(config_file=input_parameters.config_file)
 
 limiter = Limiter(
     app,
