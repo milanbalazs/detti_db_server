@@ -82,16 +82,63 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertEqual(resp.status_code, 201)
         self.assertTrue("'not_exist' key doesn't exist in DB." in resp.text)
 
-    def test_get_exist_element(self) -> None:
+    def test_set_get_exist_element(self) -> None:
         """
-        Testing when the requested element is in DB.
+        Testing when put an element to DB and the requested element is in DB.
         :return: None
         """
 
-        put_resp = requests.put("http://localhost:5000/set", data={"exist": "value_of_exist_key"})
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"exist": "value_of_exist_key"}
+        )
         self.assertEqual(put_resp.status_code, 200)
         self.assertTrue("OK" in put_resp.text)
 
-        resp = requests.get("http://localhost:5000/get/exist")
+        resp: requests.models.Response = requests.get("http://localhost:5000/get/exist")
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json(), {"exist": "value_of_exist_key"})
+
+    def test_invalid_put_to_db(self) -> None:
+        """
+        Testing when the data type is invalid in PUT.
+        IMPORTANT:
+            If the data type is not valid the PUT won't be failed.
+            It can convert almost everything to string!
+        :return: None
+        """
+
+        # The integer data will be converted to string and it will be the value of the key in DB.
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"int_data": 138}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/get/int_data")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), {"int_data": "138"})
+
+        # In case of list type value, the first element will be converted to string and
+        # it will be the value of the key in DB.
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"list_data": [1, 2, 3]}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/get/list_data")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), {"list_data": "1"})
+
+        # In case of dict type data the first key in the inner dict will be converted to string
+        # and it will be the value of the key in the DB.
+        # Please be carefully it because it can cause turbulence sometimes.
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"dict_data": {"inner_dict_key": "inner_dict_val"}}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/get/dict_data")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), {"dict_data": "inner_dict_key"})

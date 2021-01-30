@@ -415,3 +415,6 @@ password = test_password
    - The package can be installed by `pip`
  - Introduce the multithreading/multiprocessing in searching methods
    - In case of big data the multithreading/multiprocessing can reduce the execution time
+ - Add support for more data types. 
+   - Currently, the value only can be string as well as the key.
+   - Adding new supported types in case of value: int, list, dict etc...
