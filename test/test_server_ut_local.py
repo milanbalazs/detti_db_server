@@ -62,7 +62,7 @@ class DettiServerTestCases(unittest.TestCase):
 
         resp = requests.get("http://localhost:5000/get/not_exist")
         self.assertEqual(resp.status_code, 201)
-        self.assertTrue("'not_exist' key doesn't exist in DB." in resp.text)
+        self.assertTrue(resp.json(), {"not_exist": "The key doesn't exist in DB."})
 
     def test_set_get_exist_element(self) -> None:
         """
@@ -77,7 +77,7 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"exist": "value_of_exist_key"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/exist")
         self.assertEqual(resp.status_code, 200)
@@ -99,7 +99,7 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"int_data": 138}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/int_data")
         self.assertEqual(resp.status_code, 200)
@@ -111,7 +111,7 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"list_data": [1, 2, 3]}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/list_data")
         self.assertEqual(resp.status_code, 200)
@@ -124,7 +124,7 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"dict_data": {"inner_dict_key": "inner_dict_val"}}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/dict_data")
         self.assertEqual(resp.status_code, 200)
@@ -156,19 +156,19 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"dev_data": "dev"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         put_resp: requests.models.Response = requests.put(
             "http://localhost:5000/set", data={"prod_key_1": "prod_val_1"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         put_resp: requests.models.Response = requests.put(
             "http://localhost:5000/set", data={"prod_key_2": "prod_val_2"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/search_key/prod_")
         self.assertEqual(resp.status_code, 200)
@@ -186,19 +186,19 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"dev_data": "dev"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         put_resp: requests.models.Response = requests.put(
             "http://localhost:5000/set", data={"prod_key_1": "prod_val_1"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         put_resp: requests.models.Response = requests.put(
             "http://localhost:5000/set", data={"prod_key_2": "prod_val_2"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/search_val/prod_")
         self.assertEqual(resp.status_code, 200)
@@ -216,17 +216,17 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"to_be_deleted": "dummy"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         del_resp: requests.models.Response = requests.delete(
             "http://localhost:5000/delete/to_be_deleted"
         )
         self.assertEqual(del_resp.status_code, 200)
-        self.assertTrue("OK" in del_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/to_be_deleted")
         self.assertEqual(resp.status_code, 201)
-        self.assertTrue("'to_be_deleted' key doesn't exist in DB." in resp.text)
+        self.assertTrue(resp.json(), {"to_be_deleted": "The key doesn't exist in DB."})
 
     def test_get_all(self) -> None:
         """
@@ -240,13 +240,13 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/set", data={"get_all_1": "dummy"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         put_resp: requests.models.Response = requests.put(
             "http://localhost:5000/set", data={"get_all_2": "dummy"}
         )
         self.assertEqual(put_resp.status_code, 200)
-        self.assertTrue("OK" in put_resp.text)
+        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/getall")
         self.assertEqual(resp.status_code, 200)

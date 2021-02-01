@@ -24,7 +24,7 @@ Limiter:
     The request limit threshold can be set in the config file in different units.
     Example:
         >> curl http://localhost:5000/get/test_key
-        > "'test_key' key doesn't exist in DB."
+        > {"test_key": "The key doesn't exist in DB."}
         ...
         ...
         >> curl http://localhost:5000/get/test_key
@@ -45,7 +45,7 @@ JWT authentications:
               }
         Use the token:
             >> curl -H "Authorization: jwt eyJ0eXAiOiJKV..." http://localhost:5000/get/exist
-            > "exist_val"
+            > {"exist": "exist_val"}
     If the JWT authentication is active but you don't use the token, the DB won't be accessed
     Example:
         >> curl http://localhost:5000/get/exist
@@ -65,7 +65,7 @@ import os
 import sys
 import configparser
 from functools import wraps
-from typing import Union, Optional, Dict, List
+from typing import Union, Optional, Dict, List, Tuple
 from flask import Flask, request
 from flask_restful import Resource, Api, abort
 from flask_limiter import Limiter
@@ -222,7 +222,7 @@ class GetItem(Resource):
     decorators = DECORATORS
 
     @staticmethod
-    def get(db_key: str) -> Union[Dict[str, str], tuple]:
+    def get(db_key: str) -> Union[Dict[str, str], Tuple[Dict[str, str], int]]:
         """
         This get method provides the value of the key and the key itself in a dict.
         If the key doesn't exist in the DB, the method provides an error message
@@ -231,15 +231,15 @@ class GetItem(Resource):
             >> curl http://localhost:5000/get/exist
             > {"exist": "value_of_exist_key"}
             >> curl http://localhost:5000/get/doesnt_exist
-            > "'doesnt_exist' key doesn't exist in DB."
+            > {"doesnt_exist": "The key doesn't exist in DB."}
 
         :param db_key: The related key's name.
-        :return: The value of the key or an error message as string or tuple.
+        :return: The value of the key or an error message in dict.
         """
 
         value: Optional[str] = detti_db[db_key]
         if not value:
-            return "'{}' key doesn't exist in DB.".format(db_key), 201
+            return {db_key: "The key doesn't exist in DB."}, 201
         return {db_key: detti_db[db_key]}
 
 
@@ -251,15 +251,16 @@ class SetItem(Resource):
     decorators = DECORATORS
 
     @staticmethod
-    def put() -> str:
+    def put() -> Dict[str, str]:
         """
         This method can set/update an item in the DB.
-        If the operation is success, the method returns "OK" with 200 status code (default).
+        If the operation is success,
+        the method returns {"STATUS": "OK"} with 200 status code (default).
         Eg.:
             >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/get/test_key
-            > "test_val"
+            > {"test_key": "test_val"}
 
         :return: "OK" as string
         """
@@ -268,7 +269,7 @@ class SetItem(Resource):
         value: str
         for key, value in request.form.items():
             detti_db[key]: str = value
-        return "OK"
+        return {"STATUS": "OK"}
 
 
 class SearchKeys(Resource):
@@ -285,18 +286,18 @@ class SearchKeys(Resource):
         It uses the input parameter as a prefix of the keys.
         Eg.:
             >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/set -d "prod_key_1=prod_val_1" -X PUT
-            >  "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/set -d "prod_key_2=prod_val_2" -X PUT
-            >  "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/search_key/prod_
             > {
                     "prod_key_1": "prod_val_1",
                     "prod_key_2": "prod_val_2"
                 }
             >> curl http://localhost:5000/search_key/not_exist
-            >"Cannot find keys based on 'not_exist' prefix"
+            > {"prod_": "Cannot find keys for prefix"}
 
         :param key_prefix: Prefix of the searched keys.
         :return: The found key-value pairs in a dict if found any
@@ -305,7 +306,7 @@ class SearchKeys(Resource):
 
         values: Dict[str, str] = detti_db.search_keys_in_db(key_prefix)
         if not values:
-            return "Cannot find keys based on '{}' prefix".format(key_prefix), 201
+            return {"{}".format(key_prefix): "Cannot find keys for prefix"}, 201
         return values
 
 
@@ -323,11 +324,11 @@ class SearchValues(Resource):
         It uses the input parameter as a prefix of the values.
         Eg.:
             >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/set -d "prod_key_1=prod_val_1" -X PUT
-            >  "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/set -d "prod_key_2=prod_val_2" -X PUT
-            >  "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/search_val/prod_
             > {
                     "prod_key_1": "prod_val_1",
@@ -360,9 +361,9 @@ class DeleteItem(Resource):
         You can delete elements from the DB with this method.
         Eg.:
             >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/get/test_key
-            > "test_val"
+            > {"test_key": "test_val"}
             >> curl http://localhost:5000/delete/test_key -X DELETE
             > "OK"
             >> curl http://localhost:5000/get/test_key
@@ -415,9 +416,9 @@ class GetAll(Resource):
         If the DB is empty, an empty dict will be returned.
         Eg.:
             >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/set -d "test_key_1=test_val_1" -X PUT
-            > "OK"
+            > {"STATUS: "OK"}
             >> curl http://localhost:5000/getall
             > {
                     "test_key": "test_val",

@@ -252,16 +252,16 @@ Response if the server is down (Status code: 7):
 
 **`/get/<string:db_key>`**
 
-Providing the key-value pair based on getting key.
+Providing the key-value pair based on getting key. The status code is 201 in case of error.
 
 Example:
 ```bash
 >>> curl http://localhost:5000/set -d "exist=value_of_exist_key" -X PUT
-> "OK"
+> {"STATUS": "OK"}
 >>> curl http://localhost:5000/get/exist
 > {"exist": "value_of_exist_key"}
 >>> curl http://localhost:5000/get/doesnt_exist
-> "'doesnt_exist' key doesn't exist in DB."
+> {"doesnt_exist": "The key doesn't exist in DB."}
 ```
 ---
 **`/set`**
@@ -271,9 +271,9 @@ Setting/updating key-value pair in the DB.
 Example:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-> "OK"
+> {"STATUS": "OK"}
 >>> curl http://localhost:5000/get/test_key
-> "test_val"
+> {"test_key": "test_val"}
 ```
 ---
 **`/search_key/<string:key_prefix>`**
@@ -283,11 +283,11 @@ Searching keys in the DB based on provided key prefix.
 Example:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/set -d "prod_key_1=prod_val_1" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/set -d "prod_key_2=prod_val_2" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/search_key/prod_
 > {
         "prod_key_1": "prod_val_1",
@@ -304,11 +304,11 @@ Searching values in the DB based on provided value prefix.
 Example:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/set -d "prod_key_1=prod_val_1" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/set -d "prod_key_2=prod_val_2" -X PUT
->  "OK"
+>  {"STATUS": "OK"}
 >>> curl http://localhost:5000/search_val/prod_
 > {
         "prod_key_1": "prod_val_1",
@@ -325,13 +325,13 @@ Deleting an element from the DB.
 Example:
 ```bash
 >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-> "OK"
+> {"STATUS": "OK"}
 >> curl http://localhost:5000/get/test_key
-> "test_val"
+> {"test_key": "test_val"}
 >> curl http://localhost:5000/delete/test_key -X DELETE
-> "OK"
+> {"STATUS": "OK"}
 >> curl http://localhost:5000/get/test_key
-> "'test_key' key doesn't exist in DB."
+> {"test_key": "The key doesn't exist in DB."}
 ```
 ---
 **`/ping`**
@@ -356,9 +356,9 @@ Providing all elements from the DB. {key: value, key: value}
 Example:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
-> "OK"
+> {"STATUS": "OK"}
 >>> curl http://localhost:5000/set -d "test_key_1=test_val_1" -X PUT
-> "OK"
+> {"STATUS": "OK"}
 >>> curl http://localhost:5000/getall
 > {
         "test_key": "test_val",
