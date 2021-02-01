@@ -172,7 +172,7 @@ class DettiServerTestCases(unittest.TestCase):
 
         resp: requests.models.Response = requests.get("http://localhost:5000/search_key/prod_")
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json(), {'prod_key_1': 'prod_val_1', 'prod_key_2': 'prod_val_2'})
+        self.assertEqual(resp.json(), {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"})
 
     def test_search_val(self) -> None:
         """
@@ -202,7 +202,7 @@ class DettiServerTestCases(unittest.TestCase):
 
         resp: requests.models.Response = requests.get("http://localhost:5000/search_val/prod_")
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.json(), {'prod_key_1': 'prod_val_1', 'prod_key_2': 'prod_val_2'})
+        self.assertEqual(resp.json(), {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"})
 
     def test_delete_element(self) -> None:
         """
@@ -219,7 +219,8 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertTrue("OK" in put_resp.text)
 
         del_resp: requests.models.Response = requests.delete(
-            "http://localhost:5000/delete/to_be_deleted")
+            "http://localhost:5000/delete/to_be_deleted"
+        )
         self.assertEqual(del_resp.status_code, 200)
         self.assertTrue("OK" in del_resp.text)
 
