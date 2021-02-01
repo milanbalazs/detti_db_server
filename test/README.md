@@ -1,4 +1,4 @@
-#Tests
+# Tests
 
 The database and the server are tested separately.
 
@@ -11,7 +11,7 @@ The database and the server are tested separately.
 **The used UT config file:**
  - `test/detti_conf_ut.ini`
 
-##Run tests
+## Run tests
 
 You can run the all test with the `test/unit_test_runner.sh` runner script.
 
@@ -34,7 +34,7 @@ You can run the all test with the `test/unit_test_runner.sh` runner script.
  - The YML file of the GitHub action:
     - `.github/workflows/python_unittest.yml`
 
-##Results
+## Results
  - After successful running you can open the generated UT coverage HTML report:
     - `firefox htmlcov/index.html`
  - XML coverage report is available:
