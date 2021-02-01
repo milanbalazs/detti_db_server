@@ -31,6 +31,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+"""
+Lightweight Json based key-value DataBase.
+"""
+
 import os
 import sys
 import configparser
@@ -400,8 +404,3 @@ class DettiDB(object):
 
 if __name__ == "__main__":
     detti_db = DettiDB()
-    detti_db["test"] = "OK"
-    detti_db["as"] = "ppp"
-    detti_db["teso"] = "uuuu"
-    print(detti_db["test"])
-    print(detti_db.search_keys_in_db("te"))
