@@ -1,10 +1,20 @@
 #!/bin/bash
 
+# This function is called after execution! It is a cleanup.
+function finish_function(){
+  # Deactivated the Python VENV
+  deactivate || :
+  # If the bash script exits the all related processes should be killed!
+  kill 0
+}
+
+trap finish_function EXIT
 
 # Set global parameters
 SCRIPT_FULL_PATH=$(readlink -f "${0}")
 SCRIPT_DIR="${SCRIPT_FULL_PATH%/*}"
 readonly VENV_PATH="${SCRIPT_DIR}/../venv"
+readonly SEVER_SCRIPT_PATH="${SCRIPT_DIR}/../detti_server.py"
 
 # Print debug variables
 echo "[DEBUG] - SCRIPT_FULL_PATH=${SCRIPT_FULL_PATH}"
@@ -35,6 +45,8 @@ if ! pip install -r "${VENV_PATH}/../requirements.txt"; then
     echo "[ERROR] - Cannot install requirements from '${VENV_PATH}/bin/activate'" 1>&2
     exit 1
 fi
+
+python "${SEVER_SCRIPT_PATH}" "--config_file" "${SCRIPT_DIR}/detti_conf_ut.ini" &
 
 echo "[INFO] - Start to run the UnitTests and the coverage"
 coverage run --rcfile=.coverage_rc -m unittest discover -s test -p *_ut*.py -v || { echo "[ERROR] - Failed 'coverage run'" 1>&2; exit 1; }

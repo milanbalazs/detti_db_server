@@ -9,17 +9,8 @@ from typing import Optional
 
 sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), ".."))
 
-
-def mock_value_error(*args, **kwargs):
-    raise ValueError("ValueError Test exception")
-
-
-def mock_runtime_error(*args, **kwargs):
-    raise RuntimeError("RuntimeError Test exception")
-
-
-def mock_key_error(*args, **kwargs):
-    raise KeyError("KeyError Test exception")
+# Get the path of the directory of the current file.
+PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
 
 
 class DettiServerTestCases(unittest.TestCase):
@@ -47,13 +38,6 @@ class DettiServerTestCases(unittest.TestCase):
 
         warnings.filterwarnings("ignore", category=ResourceWarning)
 
-        cls.proc: Optional[subprocess.Popen] = subprocess.Popen(
-            "source venv/bin/activate && python detti_server.py --config_file {}".format(
-                os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini")
-            ).split(),
-            executable="/bin/bash",
-        )
-
     @classmethod
     def tearDownClass(cls) -> None:
         """
@@ -61,10 +45,6 @@ class DettiServerTestCases(unittest.TestCase):
         It is and "destructor" method for complete UnitTests
         :return: None
         """
-
-        if cls.proc:
-            cls.proc.terminate()
-            cls.proc.wait()
 
         config: configparser.ConfigParser = configparser.ConfigParser(allow_no_value=True)
         config.read(os.path.join(os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini"))
@@ -164,7 +144,6 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("PONG" in resp.text)
 
-    @unittest.skip("It has to be fixed. It failed with 429 status code")
     def test_search_key(self) -> None:
         """
         Searching keys in the DB based on provided key prefix.
@@ -180,18 +159,94 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertTrue("OK" in put_resp.text)
 
         put_resp: requests.models.Response = requests.put(
-            "http://localhost:5000/set", data={"prod_data_1": "prod_1"}
+            "http://localhost:5000/set", data={"prod_key_1": "prod_val_1"}
         )
         self.assertEqual(put_resp.status_code, 200)
         self.assertTrue("OK" in put_resp.text)
 
         put_resp: requests.models.Response = requests.put(
-            "http://localhost:5000/set", data={"prod_data_2": "prod_data_2"}
+            "http://localhost:5000/set", data={"prod_key_2": "prod_val_2"}
         )
         self.assertEqual(put_resp.status_code, 200)
         self.assertTrue("OK" in put_resp.text)
 
         resp: requests.models.Response = requests.get("http://localhost:5000/search_key/prod_")
         self.assertEqual(resp.status_code, 200)
-        print("kkkkk", resp.json())
-        # self.assertTrue("PONG" in resp.text)
+        self.assertEqual(resp.json(), {'prod_key_1': 'prod_val_1', 'prod_key_2': 'prod_val_2'})
+
+    def test_search_val(self) -> None:
+        """
+        Searching values in the DB based on provided value prefix.
+        End-point(s):
+            /search_val/<string:value_prefix>
+        :return: None
+        """
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"dev_data": "dev"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"prod_key_1": "prod_val_1"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"prod_key_2": "prod_val_2"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/search_val/prod_")
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json(), {'prod_key_1': 'prod_val_1', 'prod_key_2': 'prod_val_2'})
+
+    def test_delete_element(self) -> None:
+        """
+        Deleting an element from the DB.
+        End-point(s):
+            /delete/<string:db_key>
+        :return: None
+        """
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"to_be_deleted": "dummy"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        del_resp: requests.models.Response = requests.delete(
+            "http://localhost:5000/delete/to_be_deleted")
+        self.assertEqual(del_resp.status_code, 200)
+        self.assertTrue("OK" in del_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/get/to_be_deleted")
+        self.assertEqual(resp.status_code, 201)
+        self.assertTrue("'to_be_deleted' key doesn't exist in DB." in resp.text)
+
+    def test_get_all(self) -> None:
+        """
+        Get all elements from the DB.
+        End-point(s):
+            /getall
+        :return: None
+        """
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"get_all_1": "dummy"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        put_resp: requests.models.Response = requests.put(
+            "http://localhost:5000/set", data={"get_all_2": "dummy"}
+        )
+        self.assertEqual(put_resp.status_code, 200)
+        self.assertTrue("OK" in put_resp.text)
+
+        resp: requests.models.Response = requests.get("http://localhost:5000/getall")
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue("get_all_1" in resp.json() and "get_all_2" in resp.json())

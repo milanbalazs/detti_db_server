@@ -443,4 +443,5 @@ if __name__ == "__main__":
         host=config.get("SERVER", "host"),
         port=config.get("SERVER", "port"),
         debug=config.getboolean("SERVER", "debug"),
+        threaded=True,
     )
