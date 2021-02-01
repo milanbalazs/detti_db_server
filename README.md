@@ -410,6 +410,14 @@ password = test_password
   }
 ```
 
+## Production line:
+
+Currently, the production line support is not implemented in this repo (But it is in the road-map)!
+You can run the server on the production line with Nginx and Gunicorn.
+
+**Tutorial:**
+ - [How To Serve Flask Applications with Gunicorn and Nginx on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)
+
 ## Future
  - Creating PyPi package
    - The package can be installed by `pip`
