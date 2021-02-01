@@ -169,13 +169,16 @@ print(detti_db.search_values_in_db("my_"))
 
 ``` bash
 >>> python3 test.py
+[2021-02-01 12:32:29,368][detti_db.py][INFO   ]  Starting to check the getting config file.                                       (detti_db.py:120:check_config_file)
+[2021-02-01 12:32:29,368][detti_db.py][WARNING]  The getting config file's permission is not 600! Recommended to change it. Current permissions: 0o664 (detti_db.py:133:check_config_file)
+[2021-02-01 12:32:29,369][detti_db.py][OK     ]  The config file checking has been done!                                          (detti_db.py:136:check_config_file)
+[2021-02-01 12:32:29,369][detti_db.py][WARNING]  The '/home/user/detti_db/test.db' DB file doesn't exist.       (detti_db.py:181:load_db)
 test_val
 test_val_2
-{'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4', 'test_key': 'test_val', 'test_key_2': 'test_val_2'}
+{'test_key': 'test_val', 'test_key_2': 'test_val_2'}
 {'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4'}
 {'my_test_key_4': 'test_val_4'}
 {'test_key_3': 'my_test_val_3'}
-
 ```
 
 ## detti Server (with RESTful API)
