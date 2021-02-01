@@ -335,7 +335,7 @@ class SearchValues(Resource):
                     "prod_key_2": "prod_val_2"
                 }
             >> curl http://localhost:5000/search_val/not_exist
-            > "Cannot find values based on 'not_exist' prefix"
+            > {"not_exist": "Cannot find values for prefix"}
 
         :param value_prefix: Prefix of the searched values.
         :return: The found key-value pairs in a dict if found any
@@ -344,7 +344,7 @@ class SearchValues(Resource):
 
         values: Dict[str, str] = detti_db.search_values_in_db(value_prefix)
         if not values:
-            return "Cannot find values based on '{}' prefix".format(value_prefix), 201
+            return {"{}".format(value_prefix): "Cannot find values for prefix"}, 201
         return values
 
 
@@ -356,7 +356,7 @@ class DeleteItem(Resource):
     decorators = DECORATORS
 
     @staticmethod
-    def delete(db_key: str) -> str:
+    def delete(db_key: str) -> Dict[str, str]:
         """
         You can delete elements from the DB with this method.
         Eg.:
@@ -365,7 +365,7 @@ class DeleteItem(Resource):
             >> curl http://localhost:5000/get/test_key
             > {"test_key": "test_val"}
             >> curl http://localhost:5000/delete/test_key -X DELETE
-            > "OK"
+            > {"STATUS": "OK"}
             >> curl http://localhost:5000/get/test_key
             > "'test_key' key doesn't exist in DB."
 
@@ -374,7 +374,7 @@ class DeleteItem(Resource):
         """
 
         del detti_db[db_key]
-        return "OK"
+        return {"STATUS": "OK"}
 
 
 class PingServer(Resource):

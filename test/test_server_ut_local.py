@@ -174,6 +174,10 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json(), {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"})
 
+        resp: requests.models.Response = requests.get("http://localhost:5000/search_key/nonono")
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.json(), {"nonono": "Cannot find keys for prefix"})
+
     def test_search_val(self) -> None:
         """
         Searching values in the DB based on provided value prefix.
@@ -204,6 +208,10 @@ class DettiServerTestCases(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json(), {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"})
 
+        resp: requests.models.Response = requests.get("http://localhost:5000/search_val/nonono")
+        self.assertEqual(resp.status_code, 201)
+        self.assertEqual(resp.json(), {"nonono": "Cannot find values for prefix"})
+
     def test_delete_element(self) -> None:
         """
         Deleting an element from the DB.
@@ -222,7 +230,7 @@ class DettiServerTestCases(unittest.TestCase):
             "http://localhost:5000/delete/to_be_deleted"
         )
         self.assertEqual(del_resp.status_code, 200)
-        self.assertEqual(put_resp.json(), {"STATUS": "OK"})
+        self.assertEqual(del_resp.json(), {"STATUS": "OK"})
 
         resp: requests.models.Response = requests.get("http://localhost:5000/get/to_be_deleted")
         self.assertEqual(resp.status_code, 201)

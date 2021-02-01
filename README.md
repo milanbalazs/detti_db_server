@@ -294,7 +294,7 @@ Example:
         "prod_key_2": "prod_val_2"
   }
 >>> curl http://localhost:5000/search_key/not_exist
->"Cannot find keys based on 'not_exist' prefix"
+>  {"not_exist": "Cannot find keys for prefix"}
 ```
 ---
 **`/search_val/<string:value_prefix>`**
@@ -315,7 +315,7 @@ Example:
         "prod_key_2": "prod_val_2"
   }
 >>> curl http://localhost:5000/search_val/not_exist
-> "Cannot find values based on 'not_exist' prefix"
+> {"not_exist": "Cannot find values for prefix"}
 ```
 ---
 **`/delete/<string:db_key>`**
