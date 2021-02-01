@@ -99,6 +99,15 @@ input_parameters, unknown_input_parameters = parser.parse_known_args()
 if unknown_input_parameters:
     print("[WARN] - Unknown/Unused input parameters: {}".format(unknown_input_parameters))
 
+if os.path.isfile(input_parameters.config_file) and not (
+    (oct(os.stat(input_parameters.config_file).st_mode & 0o777)) == 0o600
+):
+    print(
+        "[WARN] - The permission of the config file is not 0o600! Current permissions: {}".format(
+            oct(os.stat(input_parameters.config_file).st_mode & 0o777)
+        )
+    )
+
 config: configparser.ConfigParser = configparser.ConfigParser(allow_no_value=True)
 config.read(input_parameters.config_file)
 
@@ -240,7 +249,7 @@ class GetItem(Resource):
         value: Optional[str] = detti_db[db_key]
         if not value:
             return {db_key: "The key doesn't exist in DB."}, 201
-        return {db_key: detti_db[db_key]}
+        return {"{}".format(db_key): "{}".format(value)}
 
 
 class SetItem(Resource):

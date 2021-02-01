@@ -170,10 +170,10 @@ class ColoredLogger(Logger):
             fh.setFormatter(log_file_formatter)
             self.addHandler(fh)
 
-        console: StreamHandler = StreamHandler()
-        console.setLevel(console_level)
-        console.setFormatter(color_formatter)
-        self.addHandler(console)
+        self.console: StreamHandler = StreamHandler()
+        self.console.setLevel(console_level)
+        self.console.setFormatter(color_formatter)
+        self.addHandler(self.console)
 
     def ok(self, message: str, *args, **kwargs) -> None:
         """

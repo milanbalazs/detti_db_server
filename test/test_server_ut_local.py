@@ -3,7 +3,6 @@ import sys
 import os
 import warnings
 import configparser
-import subprocess
 import requests
 from typing import Optional
 
@@ -17,8 +16,6 @@ class DettiServerTestCases(unittest.TestCase):
     """
     This class contains all TestCases for detti DB.
     """
-
-    proc: Optional[subprocess.Popen] = None
 
     def __init__(self, *args, **kwargs) -> None:
         super(DettiServerTestCases, self).__init__(*args, **kwargs)

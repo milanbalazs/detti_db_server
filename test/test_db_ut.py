@@ -39,11 +39,12 @@ class DettiDBTestCases(unittest.TestCase):
             )
         )
 
-    def setUp(self) -> None:
+    @classmethod
+    def setUpClass(cls) -> None:
         """
-        Running before all methods.
+        Running before tests.
         It is an init method for test methods.
-        :return:
+        :return: None
         """
 
         warnings.filterwarnings("ignore", category=ResourceWarning)

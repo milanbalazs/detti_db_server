@@ -36,6 +36,7 @@ import sys
 import configparser
 import json
 import signal
+from datetime import datetime
 from typing import Dict, Optional
 from threading import Thread
 
@@ -61,21 +62,25 @@ LOG_LEVELS: Dict[str, int] = {
 
 
 # Set-up the main logger instance.
-PATH_OF_LOG_FILE: str = os.path.join(PATH_OF_FILE_DIR, "logs", "main_log.log")
+PATH_OF_LOG_FILE: str = os.path.join(
+    PATH_OF_FILE_DIR, "logs", "detti_db_{}.log".format(datetime.now().strftime("%Y%m%d_%H%M%S"))
+)
 C_LOGGER: ColoredLogger = ColoredLogger(os.path.basename(__file__), log_file_path=PATH_OF_LOG_FILE)
 
 
 class DettiDB(object):
     def __init__(self, config_file: str = DEFAULT_CONFIG, c_logger: ColoredLogger = None) -> None:
-        self.config: configparser.ConfigParser = configparser.ConfigParser()
-        self.config.read(config_file)
-        self.path_of_db: str = os.path.abspath(self.config.get("DETTI_DB", "path_of_db"))
         self.c_logger: ColoredLogger = c_logger if c_logger else self.set_up_default_logger()
+        self.config: configparser.ConfigParser = configparser.ConfigParser()
+        self.check_config_file(config_file)
+        self.config.read(config_file)
+        self.set_up_default_logger(log_level=self.config.get("DETTI_DB", "log_level"))
+        self.path_of_db: str = os.path.abspath(self.config.get("DETTI_DB", "path_of_db"))
         self.set_signal_handler()
         self.detti_db: Dict[str, str] = self.load_db()
         self.dump_thread: Optional[Thread] = None
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Optional[Dict[str, str]]:
         """
         Getting item.
         :param key: Name of the key value.
@@ -84,7 +89,7 @@ class DettiDB(object):
 
         return self.get(key)
 
-    def __setitem__(self, key: str, value: str):
+    def __setitem__(self, key: str, value: str) -> bool:
         """
         Setting an item in the DB.
         :param key: Name of the key value.
@@ -94,7 +99,7 @@ class DettiDB(object):
 
         return self.set(key, value)
 
-    def __delitem__(self, key: str):
+    def __delitem__(self, key: str) -> bool:
         """
         Deleting item from DB.
         :param key: Name of the key value.
@@ -102,15 +107,43 @@ class DettiDB(object):
         """
         return self.delete(key)
 
-    def set_up_default_logger(self) -> ColoredLogger:
+    def check_config_file(self, config_file_path: str) -> None:
+        """
+        Checking the getting config file.
+        :return: None
+        """
+
+        self.c_logger.info("Starting to check the getting config file.")
+
+        if not os.path.isfile(config_file_path):
+            error_msg: str = "The getting config file doesn't exist: {}".format(config_file_path)
+            self.c_logger.error(error_msg)
+            raise FileNotFoundError(error_msg)
+
+        file_permissions: str = oct(os.stat(config_file_path).st_mode & 0o777)
+
+        if file_permissions != 0o600:
+            self.c_logger.warning(
+                "The getting config file's permission is not 600! "
+                "Recommended to change it. "
+                "Current permissions: {}".format(file_permissions)
+            )
+
+        self.c_logger.ok("The config file checking has been done!")
+
+    def set_up_default_logger(self, log_level: Optional[str] = None) -> Optional[ColoredLogger]:
         """
         Set up a default logger if it is not provided in instance.
         :return: ColoredLogger object
         """
 
+        if log_level:
+            self.c_logger.console.setLevel(LOG_LEVELS[log_level.upper()])
+            return
+
         return ColoredLogger(
             os.path.basename(__file__),
-            console_level=LOG_LEVELS[self.config.get("DETTI_DB", "log_level")],
+            console_level=LOG_LEVELS["DEBUG"],
             log_file_path=PATH_OF_LOG_FILE,
         )
 

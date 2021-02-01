@@ -2,7 +2,7 @@
 Lightweight Json based key-value DB and/or server.
 
  - Why:
-   - Small, Fast, Easy, Funny :trollface:
+   - Small, Fast, Easy, Funny
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
 **The DB handles only strings as key and value (`Dict[str, str]`).**
@@ -410,7 +410,7 @@ password = test_password
   }
 ```
 
-## Production line:
+## Production line
 
 Currently, the production line support is not implemented in this repo (But it is in the road-map)!
 You can run the server on the production line with Nginx and Gunicorn.
