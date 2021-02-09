@@ -41,7 +41,7 @@ import configparser
 import json
 import signal
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 from threading import Thread
 
 # Get the path of the directory of the current file.
@@ -84,7 +84,7 @@ class DettiDB(object):
         self.detti_db: Dict[str, str] = self.load_db()
         self.dump_thread: Optional[Thread] = None
 
-    def __getitem__(self, key: str) -> Optional[Dict[str, str]]:
+    def __getitem__(self, key: str) -> Optional[Union[str, int, float]]:
         """
         Getting item.
         :param key: Name of the key value.
@@ -93,7 +93,7 @@ class DettiDB(object):
 
         return self.get(key)
 
-    def __setitem__(self, key: str, value: str) -> bool:
+    def __setitem__(self, key: str, value: Union[str, int, float]) -> bool:
         """
         Setting an item in the DB.
         :param key: Name of the key value.
@@ -101,7 +101,7 @@ class DettiDB(object):
         :return: True if the setting was successful else False
         """
 
-        return self.set(key, value)
+        return self._set(key, value)
 
     def __delitem__(self, key: str) -> bool:
         """
@@ -210,7 +210,7 @@ class DettiDB(object):
             )
             raise unexpected_error
 
-    def get(self, db_key: str) -> Optional[str]:
+    def get(self, db_key: str) -> Optional[Union[str, int, float]]:
         """
         Providing the value of a key.
         The method returns None if the key doesn't exist in the DB.
@@ -221,7 +221,7 @@ class DettiDB(object):
         self.c_logger.info("Starting to get the '{}' element.".format(db_key))
 
         try:
-            value_of_key: str = self.detti_db[db_key]
+            value_of_key: Union[str, int, float] = self.detti_db[db_key]
             self.c_logger.ok("Successfully get the value of '{}': {}".format(db_key, value_of_key))
             return value_of_key
         except KeyError:
@@ -235,7 +235,7 @@ class DettiDB(object):
             )
             raise unexpected_error
 
-    def get_all(self) -> Dict[str, str]:
+    def get_all(self) -> Dict[str, Union[str, int, float]]:
         """
         Providing the all elements from DB.
         The method returns None if the DB is empty.
@@ -250,6 +250,31 @@ class DettiDB(object):
         self.c_logger.ok("The DB has content and it's returned.")
         return self.detti_db
 
+    def _set(self, db_key: str, db_value: Union[str, int, float]) -> bool:
+        """
+        Decide what type of setting is needed and call the proper method.
+        :param db_key: Key of the item.
+        :param db_value: Value of the key.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info("Starting to set the '{}:{}' key-value pair".format(db_key, db_value))
+
+        if not isinstance(db_key, str):
+            self.c_logger.warning("The key is not string! The value won't be stored!")
+            return False
+
+        if isinstance(db_value, str):
+            self.set(db_key, db_value)
+        elif isinstance(db_value, int):
+            self.set_int(db_key, db_value)
+        elif isinstance(db_value, float):
+            self.set_float(db_key, db_value)
+        else:
+            self.c_logger.warning("The getting value type is not supported ({}). "
+                                  "The value won't be stored.".format(type(db_value)))
+            return False
+
     def set(self, db_key: str, db_value: str) -> bool:
         """
         Setting a new item in the DB (string).
@@ -259,7 +284,8 @@ class DettiDB(object):
         :return: True if the operation is success else False.
         """
 
-        self.c_logger.info("Starting to set the '{}:{}' key-value pair".format(db_key, db_value))
+        self.c_logger.info("Starting to set the "
+                           "'{}:{}' string key-value pair".format(db_key, db_value))
 
         if isinstance(db_key, str) and isinstance(db_value, str):
             if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):

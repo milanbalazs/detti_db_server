@@ -103,7 +103,7 @@ from detti_db import DettiDB
 detti_db = DettiDB()
 ```
 
-**Set key-value pair in the detti DB (two possible ways):**
+**Set string key-value pair in the detti DB (two possible ways):**
 
 ```python
 detti_db["test_key"] = "test_val"

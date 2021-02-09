@@ -97,9 +97,17 @@ class DettiDBTestCases(unittest.TestCase):
         del self.detti_db["test_key"]
         self.assertIsNone(self.detti_db["test_key"])
 
-        # Testing the wrong type (The element should be insert to DB.)
         self.detti_db["test_key"] = 18
-        self.assertIsNone(self.detti_db["test_key"])
+        self.assertEqual(self.detti_db["test_key"], 18)
+
+        self.detti_db["test_key"] = 666.666
+        self.assertEqual(self.detti_db["test_key"], 666.666)
+
+        self.detti_db[12234] = 9876
+        self.assertIsNone(self.detti_db[12234])
+
+        self.detti_db["test_invalid_val"] = {"asf": 123}
+        self.assertIsNone(self.detti_db["test_invalid_val"])
 
     def test_load_db(self) -> None:
         """
