@@ -4,6 +4,8 @@ import os
 import shutil
 import json
 import warnings
+import configparser
+from random import randint
 from typing import Optional
 
 sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), ".."))
@@ -59,6 +61,27 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db._clear_db()
         if os.path.isfile(self.detti_db.path_of_db):
             os.remove(self.detti_db.path_of_db)
+
+    def test_exist_db_file(self) -> None:
+        """
+        Testing the loading an existing DB file
+        :return: None
+        """
+
+        with open(self.detti_db.path_of_db, "w") as opened_db:
+            json.dump({"test_key": "test_value"}, opened_db)
+
+        self.detti_db.load_db()
+
+    def test_not_exists_config_file(self) -> None:
+        """
+        Testing to get a non-exist config file.
+        :return: None
+        """
+
+        random_config_file: str = "not_exist_config.ini"
+        with self.assertRaises(FileNotFoundError):
+            DettiDB(config_file=random_config_file)
 
     def test_magic_methods(self) -> None:
         """
@@ -161,6 +184,75 @@ class DettiDBTestCases(unittest.TestCase):
 
         # Testing the too long key
         self.assertFalse(self.detti_db.set("x" * 101, "test_val"))
+
+    @staticmethod
+    def random_number_with_n_digits(number_of_digits) -> int:
+        """
+        Generating random integer with n digits.
+        :param number_of_digits: Number of digits of the generated number
+        :return: The generated random integer.
+        """
+
+        range_start: int = 10 ** (number_of_digits - 1)
+        range_end: int = (10 ** number_of_digits) - 1
+        return randint(range_start, range_end)
+
+    def test_set_int(self) -> None:
+        """
+        Testing to set an integer value in DB.
+        :return: None
+        """
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_int("test_integer_val", 666))
+        self.assertEqual(self.detti_db.get("test_integer_val"), 666)
+
+        # Testing the too long key
+        self.assertFalse(self.detti_db.set_int("x" * 101, 666))
+
+        # Testing str -> float conversion
+        self.assertTrue(self.detti_db.set_int("test_integer_str_val", "666"))
+        self.assertEqual(self.detti_db.get("test_integer_str_val"), 666)
+
+        # Testing the too long value
+        self.assertFalse(
+            self.detti_db.set_int("too_log_val", self.random_number_with_n_digits(101))
+        )
+
+        # Testing TypeError (in value)
+        self.assertFalse(self.detti_db.set_int("invalid_type", ["test"]))
+        self.assertIsNone(self.detti_db.get("invalid_type"))
+
+        # Testing if key is not string
+        self.assertFalse(self.detti_db.set_int(678, 666))
+
+    def test_set_float(self) -> None:
+        """
+        Testing to set an integer value in DB.
+        :return: None
+        """
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_float("test_float_val", 666.666))
+        self.assertEqual(self.detti_db.get("test_float_val"), 666.666)
+
+        # Testing the too long key
+        self.assertFalse(self.detti_db.set_float("x" * 101, 666))
+
+        # Testing int -> float conversion
+        self.assertTrue(self.detti_db.set_float("test_float_int_val", 666))
+        self.assertEqual(self.detti_db.get("test_float_int_val"), 666.0)
+
+        # Testing str -> float conversion
+        self.assertTrue(self.detti_db.set_float("test_float_str_val", "666.666"))
+        self.assertEqual(self.detti_db.get("test_float_str_val"), 666.666)
+
+        # Testing TypeError (in value)
+        self.assertFalse(self.detti_db.set_float("invalid_type", ["test"]))
+        self.assertIsNone(self.detti_db.get("invalid_type"))
+
+        # Testing if key is not string
+        self.assertFalse(self.detti_db.set_float(678, 666.666))
 
     def test_delete(self) -> None:
         """

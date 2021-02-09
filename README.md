@@ -4,8 +4,10 @@ Lightweight Json based key-value DB and/or server.
  - Why:
    - Small, Fast, Easy, Funny
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
-**The DB handles only strings as key and value (`Dict[str, str]`).**
+**Important:**
+
+ - **The Detti DB handles string key, and many value types.**
+ - **The Detti Server handles only string type as key and value (`Dict[str, str]`).**
 
 ## Badges
 
@@ -140,6 +142,18 @@ print(detti_db.search_keys_in_db("my_"))  # Return eg.: {'my_test_key_4': 'test_
 print(detti_db.search_values_in_db("my_"))  # Return eg.: {'test_key_4': 'my_test_val_4'}
 ```
 
+**Set integer type as value:**
+
+```python
+detti_db.set_int("int_key", 666)
+```
+
+**Set float type as value:**
+
+```python
+detti_db.set_float("float_key", 666.666)
+```
+
 **Complete example code (With not existing DB):**
 
 ```python
@@ -163,22 +177,31 @@ detti_db["my_test_key_4"] = "test_val_4"
 print(detti_db.get_all())
 print(detti_db.search_keys_in_db("my_"))
 print(detti_db.search_values_in_db("my_"))
+
+detti_db._clear_db()
+
+detti_db.set_int("int_key", 666)
+print(detti_db["int_key"])
+
+detti_db.set_float("float_key", 666.666)
+print(detti_db["float_key"])
 ```
 
 **Output:**
 
 ``` bash
->>> python3 test.py
-[2021-02-01 12:32:29,368][detti_db.py][INFO   ]  Starting to check the getting config file.                                       (detti_db.py:120:check_config_file)
-[2021-02-01 12:32:29,368][detti_db.py][WARNING]  The getting config file's permission is not 600! Recommended to change it. Current permissions: 0o664 (detti_db.py:133:check_config_file)
-[2021-02-01 12:32:29,369][detti_db.py][OK     ]  The config file checking has been done!                                          (detti_db.py:136:check_config_file)
-[2021-02-01 12:32:29,369][detti_db.py][WARNING]  The '/home/user/detti_db/test.db' DB file doesn't exist.       (detti_db.py:181:load_db)
+>>> python3 test.py 
+[2021-02-09 21:42:39,651][detti_db.py][INFO   ]  Starting to check the getting config file.                                       (detti_db.py:120:check_config_file)
+[2021-02-09 21:42:39,652][detti_db.py][WARNING]  The getting config file's permission is not 600! Recommended to change it. Current permissions: 0o664 (detti_db.py:133:check_config_file)
+[2021-02-09 21:42:39,652][detti_db.py][OK     ]  The config file checking has been done!                                          (detti_db.py:136:check_config_file)
 test_val
 test_val_2
-{'test_key': 'test_val', 'test_key_2': 'test_val_2'}
+{'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4', 'test_key': 'test_val', 'test_key_2': 'test_val_2'}
 {'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4'}
 {'my_test_key_4': 'test_val_4'}
 {'test_key_3': 'my_test_val_3'}
+666
+666.666
 ```
 
 ## detti Server (with RESTful API)

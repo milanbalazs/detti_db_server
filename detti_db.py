@@ -252,7 +252,8 @@ class DettiDB(object):
 
     def set(self, db_key: str, db_value: str) -> bool:
         """
-        Setting a new item in the DB.
+        Setting a new item in the DB (string).
+        This is the default setting of DB.
         :param db_key: Key of the item.
         :param db_value: Value of the key.
         :return: True if the operation is success else False.
@@ -270,7 +271,7 @@ class DettiDB(object):
                 return False
             elif len(db_value) > self.config.getint("DETTI_DB", "len_of_val"):
                 self.c_logger.warning(
-                    "The length of key is too long. The value won't be stored! Max len: {}".format(
+                    "The length of value is too long. The value won't be stored! Max len: {}".format(
                         self.config.getint("DETTI_DB", "len_of_val")
                     )
                 )
@@ -285,6 +286,102 @@ class DettiDB(object):
             return True
         else:
             self.c_logger.warning("The key or the value is not string! The value won't be stored!")
+            return False
+
+    def set_int(self, db_key: str, db_value: int) -> bool:
+        """
+        Setting a new integer item in the DB.
+        :param db_key: Key of the item.
+        :param db_value: Value of the key.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info(
+            "Starting to set the '{}:{}' integer key-value pair".format(db_key, db_value)
+        )
+
+        try:
+            self.c_logger.debug("Try to convert the getting value to integer.")
+            db_value: int = int(db_value)
+        except TypeError:
+            self.c_logger.warning("The value is not integer and it cannot be casted to integer.")
+            return False
+
+        if isinstance(db_key, str) and isinstance(db_value, int):
+            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+                self.c_logger.warning(
+                    "The length of key is too long. The value won't be stored! Max. len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_key")
+                    )
+                )
+                return False
+            # TODO: Introduce new parameter to config file about size of integers.
+            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+                self.c_logger.warning(
+                    "The length of value is too long. The value won't be stored! Max len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_val")
+                    )
+                )
+                return False
+            db_key: str = db_key.strip()
+            self.detti_db[db_key]: int = db_value
+            self.dump_json()
+            self.c_logger.ok(
+                "'{}:{}' integer key-value pair has been stored successfully.".format(
+                    db_key, db_value
+                )
+            )
+            return True
+        else:
+            self.c_logger.warning("The key is not string! The value won't be stored!")
+            return False
+
+    def set_float(self, db_key: str, db_value: float) -> bool:
+        """
+        Setting a new float item in the DB.
+        :param db_key: Key of the item.
+        :param db_value: Value of the key.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info(
+            "Starting to set the '{}:{}' float key-value pair".format(db_key, db_value)
+        )
+
+        try:
+            self.c_logger.debug("Try to convert the getting value to float.")
+            db_value: float = float(db_value)
+        except TypeError:
+            self.c_logger.warning("The value is not float and it cannot be casted to float.")
+            return False
+
+        if isinstance(db_key, str) and isinstance(db_value, float):
+            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+                self.c_logger.warning(
+                    "The length of key is too long. The value won't be stored! Max. len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_key")
+                    )
+                )
+                return False
+            # TODO: Introduce new parameter to config file about size of float.
+            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+                self.c_logger.warning(
+                    "The length of value is too long. The value won't be stored! Max len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_val")
+                    )
+                )
+                return False
+            db_key: str = db_key.strip()
+            self.detti_db[db_key]: float = db_value
+            self.dump_json()
+            self.c_logger.ok(
+                "'{}:{}' float key-value pair has been stored successfully.".format(
+                    db_key, db_value
+                )
+            )
+            return True
+        else:
+            self.c_logger.warning("The key is not string! The value won't be stored!")
             return False
 
     def delete(self, db_key: str) -> bool:
