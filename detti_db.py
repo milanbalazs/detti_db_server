@@ -271,8 +271,10 @@ class DettiDB(object):
         elif isinstance(db_value, float):
             self.set_float(db_key, db_value)
         else:
-            self.c_logger.warning("The getting value type is not supported ({}). "
-                                  "The value won't be stored.".format(type(db_value)))
+            self.c_logger.warning(
+                "The getting value type is not supported ({}). "
+                "The value won't be stored.".format(type(db_value))
+            )
             return False
 
     def set(self, db_key: str, db_value: str) -> bool:
@@ -284,8 +286,9 @@ class DettiDB(object):
         :return: True if the operation is success else False.
         """
 
-        self.c_logger.info("Starting to set the "
-                           "'{}:{}' string key-value pair".format(db_key, db_value))
+        self.c_logger.info(
+            "Starting to set the " "'{}:{}' string key-value pair".format(db_key, db_value)
+        )
 
         if isinstance(db_key, str) and isinstance(db_value, str):
             if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
