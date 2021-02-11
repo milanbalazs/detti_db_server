@@ -287,8 +287,15 @@ class DettiDB(object):
         """
 
         self.c_logger.info(
-            "Starting to set the " "'{}:{}' string key-value pair".format(db_key, db_value)
+            "Starting to set the '{}:{}' string key-value pair".format(db_key, db_value)
         )
+
+        try:
+            self.c_logger.debug("Try to convert the getting value to string.")
+            db_value: str = str(db_value)
+        except TypeError:
+            self.c_logger.warning("The value is not string and it cannot be casted to string.")
+            return False
 
         if isinstance(db_key, str) and isinstance(db_value, str):
             if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
@@ -503,6 +510,8 @@ class DettiDB(object):
         value: str
 
         for key, value in self.detti_db.items():
+            if not isinstance(value, str):
+                continue
             if value.startswith(value_prefix):
                 self.c_logger.debug(
                     "Found key-value pair for '{}' value prefix: {}:{}".format(

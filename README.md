@@ -103,56 +103,151 @@ from detti_db import DettiDB
 detti_db = DettiDB()
 ```
 
-**Set string key-value pair in the detti DB (two possible ways):**
+**Supported types in DB:**
+
+ - Key
+   -  `str`
+ - Value
+   - `str`
+   - `float`
+   - `int`
+
+---
+
+**Setters:**
+
+**Key: `str`, Value: `str`:**
+
+With dictionary like solution:
 
 ```python
-detti_db["test_key"] = "test_val"
-detti_db.set("test_key_2", "test_val_2")
+detti_db["test_str_key"] = "test_val"  # Set the value as "test_val" (str)
 ```
 
-**Get value of key (two possible ways):**
+With method usage:
 
 ```python
-print(detti_db["test_key"])  # test_val
-print(detti_db.get("test_key_2"))  # test_val_2
+detti_db.set("test_str_key_2", "test_val_2")  # Set the value as "test_val_2" (str)
 ```
 
-**Get all elements of detti DB (Returning a `Dict[str, str]`):**
+Note:
+ - The `set()` method tries to cast the getting value to string. Eg.:
+ - ```python
+   detti_db.set("test_str_key_3", 123)  # Set the value as "123" (str)
+   ```
+   
+---
+
+**Key: `str`, Value: `int`:**
+
+With dictionary like solution:
 
 ```python
-print(detti_db.get_all())  # {'test_key': 'test_val', 'test_key_2': 'test_val_2'}
+detti_db["test_int_key"] = 8  # Set the value as 8 (int)
 ```
 
-**Delete an element from detti DB (two possible ways):**
+With method usage:
+
+```python
+detti_db.set_int("test_int_key_2", 9)  # Set the value as 9 (int)
+```
+
+Note:
+ - The `set_int()` method tries to cast the getting value to integer. Eg.:
+ - ```python
+   detti_db.set_int("test_int_key_3", 123.123)  # Set the value as 123 (int)
+   detti_db.set_int("test_int_key_4", "888")  # Set the value as 888 (int)
+   ```
+
+---
+
+**Key: `str`, Value: `float`:**
+
+With dictionary like solution:
+
+```python
+detti_db["test_float_key"] = 8.8  # Set the value as 8.8 (float)
+```
+
+With method usage:
+
+```python
+detti_db.set_float("test_float_key_2", 9.9)  # Set the value as 9.9 (float)
+```
+
+Note:
+ - The `set_float()` method tries to cast the getting value to float. Eg.:
+ - ```python
+   detti_db.set_float("test_float_key_3", 123)  # Set the value as 123.0 (float)
+   detti_db.set_float("test_float_key_4", "888.888")  # Set the value as 888.888 (float)
+   ```
+
+---
+
+**Getters:**
+
+**Get element**
+
+With dictionary like solution:
+
+```python
+detti_db["test_key"]  # Return: "test_val"
+```
+
+With method usage:
+
+```python
+detti_db.get("test_key_2")  # Return: "test_val_2"
+```
+
+Note:
+ - The above getter solutions can return any types.
+
+---
+
+**Get all elements:**
+
+The `get_all()` method provides the all key-value pairs from DB in Json format. It supports any types.
+
+```python
+detti_db.get_all()  # Return: {'test_key': 'test_val', 'test_key_2': 'test_val_2'}
+```
+
+---
+
+**Deletion:**
+
+With dictionary like solution:
 
 ```python
 del detti_db["test_key"]
+```
+
+With method usage:
+
+```python
 detti_db.delete("test_key_2")  # Return True if it's success else False
 ```
+
+---
+
+**Searching:**
 
 **Search keys based on provided prefix (Returning a `Dict[str, str]`):**
 
 ```python
-print(detti_db.search_keys_in_db("my_"))  # Return eg.: {'my_test_key_4': 'test_val_4'}
+detti_db.search_keys_in_db("my_")  # Return: {'my_test_key_4': 'test_val_4'}
 ```
+
+---
 
 **Search values based on provided prefix (Returning a `Dict[str, str]`):**
 
 ```python
-print(detti_db.search_values_in_db("my_"))  # Return eg.: {'test_key_4': 'my_test_val_4'}
+detti_db.search_values_in_db("my_")  # Return: {'test_key_4': 'my_test_val_4'}
 ```
 
-**Set integer type as value:**
-
-```python
-detti_db.set_int("int_key", 666)
-```
-
-**Set float type as value:**
-
-```python
-detti_db.set_float("float_key", 666.666)
-```
+---
 
 **Complete example code (With not existing DB):**
 
@@ -161,47 +256,39 @@ from detti_db import DettiDB
 
 detti_db: DettiDB = DettiDB()
 
+# setters
 detti_db["test_key"] = "test_val"
 detti_db.set("test_key_2", "test_val_2")
+detti_db.set_int("test_int_key", 123)
+detti_db.set_float("test_float_key", 123.123)
 
-print(detti_db["test_key"])
-print(detti_db.get("test_key_2"))
+# getters
+print("test_key -> {}".format(detti_db["test_key"]))
+print("test_int_key -> {}".format(detti_db.get("test_int_key")))
+print("All content: {}".format(detti_db.get_all()))
 
-print(detti_db.get_all())
-
+# deletions
 del detti_db["test_key"]
 detti_db.delete("test_key_2")
 
+# Set some new items for searching
 detti_db["test_key_3"] = "my_test_val_3"
 detti_db["my_test_key_4"] = "test_val_4"
-print(detti_db.get_all())
-print(detti_db.search_keys_in_db("my_"))
-print(detti_db.search_values_in_db("my_"))
 
-detti_db._clear_db()
+print("'my_' key prefixes -> {}".format(detti_db.search_keys_in_db("my_")))
+print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 
-detti_db.set_int("int_key", 666)
-print(detti_db["int_key"])
-
-detti_db.set_float("float_key", 666.666)
-print(detti_db["float_key"])
 ```
 
 **Output:**
 
 ``` bash
 >>> python3 test.py 
-[2021-02-09 21:42:39,651][detti_db.py][INFO   ]  Starting to check the getting config file.                                       (detti_db.py:120:check_config_file)
-[2021-02-09 21:42:39,652][detti_db.py][WARNING]  The getting config file's permission is not 600! Recommended to change it. Current permissions: 0o664 (detti_db.py:133:check_config_file)
-[2021-02-09 21:42:39,652][detti_db.py][OK     ]  The config file checking has been done!                                          (detti_db.py:136:check_config_file)
-test_val
-test_val_2
-{'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4', 'test_key': 'test_val', 'test_key_2': 'test_val_2'}
-{'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4'}
-{'my_test_key_4': 'test_val_4'}
-{'test_key_3': 'my_test_val_3'}
-666
-666.666
+test_key -> test_val
+test_int_key -> 123
+All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123}
+'my_' key prefixes -> {'my_test_key_4': 'test_val_4'}
+'my_' value prefixes -> {'test_key_3': 'my_test_val_3'}
 ```
 
 ## detti Server (with RESTful API)
