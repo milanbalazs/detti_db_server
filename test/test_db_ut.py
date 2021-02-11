@@ -4,7 +4,6 @@ import os
 import shutil
 import json
 import warnings
-import configparser
 from random import randint
 from typing import Optional
 
@@ -236,7 +235,7 @@ class DettiDBTestCases(unittest.TestCase):
 
     def test_set_float(self) -> None:
         """
-        Testing to set an integer value in DB.
+        Testing to set a float value in DB.
         :return: None
         """
 
@@ -262,6 +261,34 @@ class DettiDBTestCases(unittest.TestCase):
         # Testing if key is not string
         self.assertFalse(self.detti_db.set_float(678, 666.666))
 
+    def test_set_list(self) -> None:
+        """
+        Testing to set a list value in DB.
+        :return: None
+        """
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_list("test_list_val", ["a", 1]))
+        self.assertEqual(self.detti_db.get("test_list_val"), ["a", 1])
+
+        # Testing the too long key
+        self.assertFalse(self.detti_db.set_list("x" * 101, ["a", 2]))
+
+        # Testing tuple -> list conversion
+        self.assertTrue(self.detti_db.set_list("test_tuple_list_val", ("a", 3)))
+        self.assertEqual(self.detti_db.get("test_tuple_list_val"), ["a", 3])
+
+        # Testing dict -> list conversion
+        self.assertTrue(self.detti_db.set_list("test_dict_list_val", {"a", 4}))
+        self.assertEqual(self.detti_db.get("test_dict_list_val"), ["a", 4])
+
+        # Testing TypeError (in value)
+        self.assertFalse(self.detti_db.set_list("invalid_type", 5))
+        self.assertIsNone(self.detti_db.get("invalid_type"))
+
+        # Testing if key is not string
+        self.assertFalse(self.detti_db.set_list(678, ["a", 6]))
+
     def test_delete(self) -> None:
         """
         Testing the delete method.
@@ -281,10 +308,11 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db["test_key"] = "test_val"
         self.detti_db["prod_key_1"] = "prod_val_1"
         self.detti_db["prod_key_2"] = "prod_val_2"
+        self.detti_db["prod_key_3"] = 128
 
         self.assertEqual(
             self.detti_db.search_keys_in_db("prod_"),
-            {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"},
+            {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2", "prod_key_3": 128},
         )
 
     def test_search_values_in_db(self) -> None:
@@ -296,6 +324,7 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db["test_key"] = "test_val"
         self.detti_db["prod_key_1"] = "prod_val_1"
         self.detti_db["prod_key_2"] = "prod_val_2"
+        self.detti_db["prod_key_3"] = 128
 
         self.assertEqual(
             self.detti_db.search_values_in_db("prod_"),

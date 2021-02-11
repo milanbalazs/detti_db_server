@@ -93,7 +93,7 @@ class DettiDB(object):
 
         return self.get(key)
 
-    def __setitem__(self, key: str, value: Union[str, int, float]) -> bool:
+    def __setitem__(self, key: str, value: Union[str, int, float, list]) -> bool:
         """
         Setting an item in the DB.
         :param key: Name of the key value.
@@ -250,7 +250,7 @@ class DettiDB(object):
         self.c_logger.ok("The DB has content and it's returned.")
         return self.detti_db
 
-    def _set(self, db_key: str, db_value: Union[str, int, float]) -> bool:
+    def _set(self, db_key: str, db_value: Union[str, int, float, list]) -> bool:
         """
         Decide what type of setting is needed and call the proper method.
         :param db_key: Key of the item.
@@ -270,6 +270,8 @@ class DettiDB(object):
             self.set_int(db_key, db_value)
         elif isinstance(db_value, float):
             self.set_float(db_key, db_value)
+        elif isinstance(db_value, list):
+            self.set_list(db_key, db_value)
         else:
             self.c_logger.warning(
                 "The getting value type is not supported ({}). "
@@ -420,6 +422,54 @@ class DettiDB(object):
                 "'{}:{}' float key-value pair has been stored successfully.".format(
                     db_key, db_value
                 )
+            )
+            return True
+        else:
+            self.c_logger.warning("The key is not string! The value won't be stored!")
+            return False
+
+    def set_list(self, db_key: str, db_value: list) -> bool:
+        """
+        Setting a new list item in the DB.
+        :param db_key: Key of the item.
+        :param db_value: Value of the key.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info(
+            "Starting to set the '{}:{}' list key-value pair".format(db_key, db_value)
+        )
+
+        try:
+            self.c_logger.debug("Try to convert the getting value to list.")
+            db_value: list = list(db_value)
+        except TypeError:
+            self.c_logger.warning("The value is not list and it cannot be casted to list.")
+            return False
+
+        if isinstance(db_key, str) and isinstance(db_value, list):
+            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+                self.c_logger.warning(
+                    "The length of key is too long. "
+                    "The value won't be stored! Max. len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_key")
+                    )
+                )
+                return False
+            # TODO: Introduce new parameter to config file about size of list.
+            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+                self.c_logger.warning(
+                    "The length of value is too long. "
+                    "The value won't be stored! Max len: {}".format(
+                        self.config.getint("DETTI_DB", "len_of_val")
+                    )
+                )
+                return False
+            db_key: str = db_key.strip()
+            self.detti_db[db_key]: list = db_value
+            self.dump_json()
+            self.c_logger.ok(
+                "'{}:{}' list key-value pair has been stored successfully.".format(db_key, db_value)
             )
             return True
         else:

@@ -124,6 +124,8 @@ With dictionary like solution:
 detti_db["test_str_key"] = "test_val"  # Set the value as "test_val" (str)
 ```
 
+:Return: `True` if the setting is successful else `False`
+
 Note:
  - If you want to set a non-supported value type, you will get a warning message and
    the value won't be store to DB. Eg.:
@@ -138,6 +140,8 @@ With method usage:
 ```python
 detti_db.set("test_str_key_2", "test_val_2")  # Set the value as "test_val_2" (str)
 ```
+
+:Return: `True` if the setting is successful else `False`
 
 Note:
  - The `set()` method tries to cast the getting value to string. Eg.:
@@ -155,11 +159,15 @@ With dictionary like solution:
 detti_db["test_int_key"] = 8  # Set the value as 8 (int)
 ```
 
+:Return: `True` if the setting is successful else `False`
+
 With method usage:
 
 ```python
 detti_db.set_int("test_int_key_2", 9)  # Set the value as 9 (int)
 ```
+
+:Return: `True` if the setting is successful else `False`
 
 Note:
  - The `set_int()` method tries to cast the getting value to integer. Eg.:
@@ -178,17 +186,48 @@ With dictionary like solution:
 detti_db["test_float_key"] = 8.8  # Set the value as 8.8 (float)
 ```
 
+:Return: `True` if the setting is successful else `False`
+
 With method usage:
 
 ```python
 detti_db.set_float("test_float_key_2", 9.9)  # Set the value as 9.9 (float)
 ```
 
+:Return: `True` if the setting is successful else `False`
+
 Note:
  - The `set_float()` method tries to cast the getting value to float. Eg.:
  - ```python
    detti_db.set_float("test_float_key_3", 123)  # Set the value as 123.0 (float)
    detti_db.set_float("test_float_key_4", "888.888")  # Set the value as 888.888 (float)
+   ```
+
+---
+
+**Key: `str`, Value: `List[Any]`:**
+
+With dictionary like solution:
+
+```python
+detti_db["test_list_key"] = ["a", 1]  # Set the value as ["a", 1] (list)
+```
+
+:Return: `True` if the setting is successful else `False`
+
+With method usage:
+
+```python
+detti_db.set_list("test_list_key_2", ["a", 1])  # Set the value as ["a", 1] (list)
+```
+
+:Return: `True` if the setting is successful else `False`
+
+Note:
+ - The `set_list()` method tries to cast the getting value to float. Eg.:
+ - ```python
+   detti_db.set_list("test_list_key_3", ("a", 2))  # Set the value as ["a", 2] (list)
+   detti_db.set_list("test_list_key_4", {"a", 3})  # Set the value as ["a", 3] (list))
    ```
 
 ---
@@ -203,11 +242,15 @@ With dictionary like solution:
 detti_db["test_key"]  # Return: "test_val"
 ```
 
+:Return: The requested value if it exists in DB else `None`
+
 With method usage:
 
 ```python
 detti_db.get("test_key_2")  # Return: "test_val_2"
 ```
+
+:Return: The requested value if it exists in DB else `None`
 
 Note:
  - The above getter solutions can return any types.
@@ -222,6 +265,8 @@ The `get_all()` method provides the all key-value pairs from DB in Json format. 
 detti_db.get_all()  # Return: {'test_key': 'test_val', 'test_key_2': 'test_val_2'}
 ```
 
+:Return: The requested items in dict if any exists in DB else empty dict
+
 ---
 
 **Deletion:**
@@ -232,11 +277,15 @@ With dictionary like solution:
 del detti_db["test_key"]
 ```
 
+:Return: `True` if the setting is successful else `False`
+
 With method usage:
 
 ```python
 detti_db.delete("test_key_2")  # Return True if it's success else False
 ```
+
+:Return: `True` if the setting is successful else `False`
 
 ---
 
@@ -248,6 +297,8 @@ detti_db.delete("test_key_2")  # Return True if it's success else False
 detti_db.search_keys_in_db("my_")  # Return: {'my_test_key_4': 'test_val_4'}
 ```
 
+:Return: The requested items in dict if any exists in DB else empty dict
+
 ---
 
 **Search values based on provided prefix (Returning a `Dict[str, str]`):**
@@ -255,6 +306,8 @@ detti_db.search_keys_in_db("my_")  # Return: {'my_test_key_4': 'test_val_4'}
 ```python
 detti_db.search_values_in_db("my_")  # Return: {'test_key_4': 'my_test_val_4'}
 ```
+
+:Return: The requested items in dict if any exists in DB else empty dict
 
 ---
 
@@ -270,10 +323,12 @@ detti_db["test_key"] = "test_val"
 detti_db.set("test_key_2", "test_val_2")
 detti_db.set_int("test_int_key", 123)
 detti_db.set_float("test_float_key", 123.123)
+detti_db.set_list("test_list_key", ["a", 1])
 
 # getters
 print("test_key -> {}".format(detti_db["test_key"]))
 print("test_int_key -> {}".format(detti_db.get("test_int_key")))
+print("test_list_key -> {}".format(detti_db["test_list_key"]))
 print("All content: {}".format(detti_db.get_all()))
 
 # deletions
@@ -286,7 +341,6 @@ detti_db["my_test_key_4"] = "test_val_4"
 
 print("'my_' key prefixes -> {}".format(detti_db.search_keys_in_db("my_")))
 print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
-
 ```
 
 **Output:**
@@ -295,9 +349,11 @@ print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 >>> python3 test.py 
 test_key -> test_val
 test_int_key -> 123
-All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123}
+test_list_key -> ['a', 1]
+All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1]}
 'my_' key prefixes -> {'my_test_key_4': 'test_val_4'}
 'my_' value prefixes -> {'test_key_3': 'my_test_val_3'}
+
 ```
 
 ## detti Server (with RESTful API)
