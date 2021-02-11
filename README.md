@@ -227,7 +227,7 @@ Note:
  - The `set_list()` method tries to cast the getting value to float. Eg.:
  - ```python
    detti_db.set_list("test_list_key_3", ("a", 2))  # Set the value as ["a", 2] (list)
-   detti_db.set_list("test_list_key_4", {"a", 3})  # Set the value as ["a", 3] (list))
+   detti_db.set_list("test_list_key_4", "abc")  # Set the value as ["a", "b", "c"] (list))
    ```
 
 ---

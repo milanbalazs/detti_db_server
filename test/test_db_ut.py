@@ -279,8 +279,8 @@ class DettiDBTestCases(unittest.TestCase):
         self.assertEqual(self.detti_db.get("test_tuple_list_val"), ["a", 3])
 
         # Testing dict -> list conversion
-        self.assertTrue(self.detti_db.set_list("test_dict_list_val", {"a", 4}))
-        self.assertEqual(self.detti_db.get("test_dict_list_val"), ["a", 4])
+        self.assertTrue(self.detti_db.set_list("test_dict_list_val", "abc"))
+        self.assertEqual(self.detti_db.get("test_dict_list_val"), ["a", "b", "c"])
 
         # Testing TypeError (in value)
         self.assertFalse(self.detti_db.set_list("invalid_type", 5))
