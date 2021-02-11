@@ -114,7 +114,7 @@ detti_db = DettiDB()
 
 ---
 
-**Setters:**
+:arrow_right: **Setters:**
 
 **Key: `str`, Value: `str`:**
 
@@ -232,7 +232,7 @@ Note:
 
 ---
 
-**Getters:**
+:arrow_right: **Getters:**
 
 **Get element**
 
