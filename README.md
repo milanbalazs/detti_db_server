@@ -124,6 +124,15 @@ With dictionary like solution:
 detti_db["test_str_key"] = "test_val"  # Set the value as "test_val" (str)
 ```
 
+Note:
+ - If you want to set a non-supported value type, you will get a warning message and
+   the value won't be store to DB. Eg.:
+   - ```python
+     detti_db["test_key"] = (1, 2, 3)  # Try to store Tuple type
+     >> [detti_db.py][WARNING]  The getting value type is not supported (<class 'tuple'>). The value won't be stored.
+     ```
+
+
 With method usage:
 
 ```python
