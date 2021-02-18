@@ -1,12 +1,16 @@
-![detti_db_logo](https://github.com/milanbalazs/detti_db_server/doc/pics/detti_db_logo.png)
+<p align="center">
+  <img src="https://github.com/milanbalazs/detti_db/doc/pics/detti_db_logo.png?raw=true" alt="detti db server logo"/>
+</p>
 
 <h2 align="center">Lightweight Json based key-value DB and/or server.</h2>
 
----
-![PythonBlack](https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg)
-![PythonStyle](https://github.com/milanbalazs/detti_db/workflows/PythonStyle/badge.svg)
-![PythonUnitTest](https://github.com/milanbalazs/detti_db/workflows/PythonUnitTest/badge.svg)
-![CodeQL](https://github.com/milanbalazs/detti_db_server/workflows/CodeQL/badge.svg)
+<p align="center">
+<img src="https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg">
+<img src="https://github.com/milanbalazs/detti_db/workflows/PythonStyle/badge.svg">
+<img src="https://github.com/milanbalazs/detti_db/workflows/PythonUnitTest/badge.svg">
+<img src="https://github.com/milanbalazs/detti_db_server/workflows/CodeQL/badge.svg">
+</p>
+
 ---
 
 **Why:**
