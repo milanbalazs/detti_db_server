@@ -42,7 +42,7 @@ import json
 import signal
 from datetime import datetime
 from typing import Dict, Optional, Union
-from threading import Thread
+from threading import Thread, Lock
 
 # Get the path of the directory of the current file.
 PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
@@ -83,6 +83,7 @@ class DettiDB(object):
         self.set_signal_handler()
         self.detti_db: Dict[str, str] = self.load_db()
         self.dump_thread: Optional[Thread] = None
+        self.lock: Lock = Lock()
 
     def __getitem__(self, key: str) -> Optional[Union[str, int, float]]:
         """
@@ -513,10 +514,11 @@ class DettiDB(object):
         :return: None
         """
 
-        with open(self.path_of_db, "wt") as opened_db:
-            self.dump_thread: Thread = Thread(target=json.dump, args=(self.detti_db, opened_db))
-            self.dump_thread.start()
-            self.dump_thread.join()
+        with self.lock:
+            with open(self.path_of_db, "wt") as opened_db:
+                self.dump_thread: Thread = Thread(target=json.dump, args=(self.detti_db, opened_db))
+                self.dump_thread.start()
+                self.dump_thread.join()
 
     def search_keys_in_db(self, key_prefix: str) -> Dict[str, str]:
         """

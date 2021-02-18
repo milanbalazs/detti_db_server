@@ -1,21 +1,23 @@
-# detti DB and/or Server
-Lightweight Json based key-value DB and/or server.
+![detti_db_logo](https://github.com/milanbalazs/detti_db_server/doc/pics/detti_db_logo.png)
 
- - Why:
-   - Small, Fast, Easy, Funny
+<h2 align="center">Lightweight Json based key-value DB and/or server.</h2>
+
+---
+![PythonBlack](https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg)
+![PythonStyle](https://github.com/milanbalazs/detti_db/workflows/PythonStyle/badge.svg)
+![PythonUnitTest](https://github.com/milanbalazs/detti_db/workflows/PythonUnitTest/badge.svg)
+![CodeQL](https://github.com/milanbalazs/detti_db_server/workflows/CodeQL/badge.svg)
+---
+
+**Why:**
+   - Small, Fast, Efficient, Easy, Funny
 
 **Important:**
 
  - **The Detti DB handles string key, and many value types.**
  - **The Detti Server handles only string type as key and value (`Dict[str, str]`).**
 
-## Badges
-
-![PythonBlack](https://github.com/milanbalazs/detti_db/workflows/PythonBlack/badge.svg)
-![PythonStyle](https://github.com/milanbalazs/detti_db/workflows/PythonStyle/badge.svg)
-![PythonUnitTest](https://github.com/milanbalazs/detti_db/workflows/PythonUnitTest/badge.svg)
-![CodeQL](https://github.com/milanbalazs/detti_db_server/workflows/CodeQL/badge.svg)
-## Create an environment
+## Create environment
 
 **Create a project folder and a venv folder within:**
 ```bash
