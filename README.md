@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/milanbalazs/detti_db/doc/pics/detti_db_logo.png?raw=true" alt="detti db server logo"/>
+  <img src="https://github.com/milanbalazs/detti_db_server/blob/main/doc/pics/detti_db_logo.png?raw=true" alt="detti db server logo"/>
 </p>
 
 <h2 align="center">Lightweight Json based key-value DB and/or server.</h2>
