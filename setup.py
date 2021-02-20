@@ -46,7 +46,7 @@ setup(
         "Topic :: Database",
         "Operating System :: POSIX",
     ],
-    scripts=["tools/color_logger.py",],
+    scripts=["tools/color_logger.py"],
     package_data={"": ["tools/*.py", "detti_conf.ini"]},
     packages=["."],
 )
