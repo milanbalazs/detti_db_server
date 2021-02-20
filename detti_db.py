@@ -501,6 +501,8 @@ class DettiDB(object):
 
         self.detti_db[db_key].append(db_val)
 
+        self.dump_json()
+
         self.c_logger.ok("'{}' successfully append to '{}' list".format(db_val, db_key))
 
         return True
