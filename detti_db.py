@@ -41,7 +41,7 @@ import configparser
 import json
 import signal
 from datetime import datetime
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Any
 from threading import Thread, Lock
 
 # Get the path of the directory of the current file.
@@ -476,6 +476,34 @@ class DettiDB(object):
         else:
             self.c_logger.warning("The key is not string! The value won't be stored!")
             return False
+
+    def append_list(self, db_key: str, db_val: Any):
+        """
+        Append a new element for a list in the DB.
+        :param db_key: Key of the list element in DB.
+        :param db_val: The appended value.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info(
+            "Starting to append the '{}' item to '{}' list in DB".format(db_val, db_key)
+        )
+
+        if db_key not in self.detti_db:
+            self.c_logger.warning("The '{}' key is not in DB.".format(db_key))
+            return False
+
+        if not isinstance(self.detti_db[db_key], list):
+            self.c_logger.warning(
+                "The value of '{}' key is not a list. Cannot append element".format(db_key)
+            )
+            return False
+
+        self.detti_db[db_key].append(db_val)
+
+        self.c_logger.ok("'{}' successfully append to '{}' list".format(db_val, db_key))
+
+        return True
 
     def delete(self, db_key: str) -> bool:
         """

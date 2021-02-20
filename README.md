@@ -239,6 +239,28 @@ Note:
 
 ---
 
+**Append `Any` to `list`:**
+
+```python
+detti_db.append_list("key", "value")
+```
+
+Example:
+```python
+detti_db.set_list("test_list", ["a", 1])
+detti_db.append_list("test_list", 666)
+print(detti_db["test_list"])
+>>> ["a", 1, 666]
+```
+
+:Return: `True` if the appending is successful else `False`
+
+Note:
+ - The return value is `False` if you try to append a new element to a not existing key in DB.
+ - The return value is `False` if you try to append a new element to a key which value is not list type.
+
+---
+
 :arrow_right: **Getters:**
 
 **Get element**

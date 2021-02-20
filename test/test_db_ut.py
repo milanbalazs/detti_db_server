@@ -331,6 +331,28 @@ class DettiDBTestCases(unittest.TestCase):
             {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"},
         )
 
+    def test_append_list(self) -> None:
+        """
+        Testing to append a new element to a list in DB.
+        :return: None
+        """
+
+        # Set a test list type element in DB
+        self.detti_db.set_list("test_list", ["a", 1])
+
+        # Append correctly a new element to list
+        self.assertTrue(self.detti_db.append_list("test_list", 666))
+
+        self.assertEqual(self.detti_db.get("test_list"), ["a", 1, 666])
+
+        # Try to append new element to a non-exist key
+        self.assertFalse(self.detti_db.append_list("non_exist", 777))
+
+        # Try to append a new element to a not list type element in DB.
+        self.assertTrue(self.detti_db.set_float("test_float_val", 666.666))
+
+        self.assertFalse(self.detti_db.append_list("test_float_val", 888))
+
 
 if __name__ == "__main__":
     unittest.main()
