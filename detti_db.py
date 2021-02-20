@@ -604,6 +604,17 @@ class DettiDB(object):
 
         return return_dict
 
+    def is_exist(self, db_key: str) -> bool:
+        """
+        Checking if key is in DB.
+        :param db_key: Key of the item.
+        :return: True if the item exist else False.
+        """
+
+        self.c_logger.info("Starting to check if '{}' key exists in DB.".format(db_key))
+
+        return db_key in self.detti_db
+
     def set_signal_handler(self) -> None:
         """
         Set a signal handler.

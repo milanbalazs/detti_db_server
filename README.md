@@ -298,6 +298,18 @@ detti_db.get_all()  # Return: {'test_key': 'test_val', 'test_key_2': 'test_val_2
 
 ---
 
+**Check if key exists in DB:**
+
+The `is_exist()` method returns `True` if the key is in DB else `False`.
+
+```python
+detti_db.is_exist("elem_key")
+```
+
+:Return: `True` if the key is in DB else `False`.
+
+---
+
 **Deletion:**
 
 With dictionary like solution:

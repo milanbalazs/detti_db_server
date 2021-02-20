@@ -353,6 +353,20 @@ class DettiDBTestCases(unittest.TestCase):
 
         self.assertFalse(self.detti_db.append_list("test_float_val", 888))
 
+    def test_is_exist(self) -> None:
+        """
+        Testing if an element is in DB.
+        :return: None
+        """
+
+        self.detti_db["test_key"] = "test_val"
+
+        # True should be returned if the key is in DB.
+        self.assertTrue(self.detti_db.is_exist("test_key"))
+
+        # False should be returned if the key is NOT in DB.
+        self.assertFalse(self.detti_db.is_exist("test_key_2"))
+
 
 if __name__ == "__main__":
     unittest.main()
