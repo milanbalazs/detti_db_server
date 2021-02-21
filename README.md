@@ -11,7 +11,13 @@
 <img src="https://github.com/milanbalazs/detti_db_server/workflows/CodeQL/badge.svg">
 </p>
 
+<p align="center">
+<img src="https://pepy.tech/badge/detti-db-server">
+</p>
+
 ---
+
+## Introduction
 
 **Why:**
    - Small, Fast, Efficient, Easy, Funny
@@ -21,32 +27,42 @@
  - **The Detti DB handles string key, and many value types.**
  - **The Detti Server handles only string type as key and value (`Dict[str, str]`).**
 
-## Create environment
+## Links
+
+* [PyPi](https://pypi.org/project/detti-db-server/)
+
+## Easy install with PIP
+
+```bash
+>>> pip install detti-db-server
+```
+
+## Create environment and use virtual environment
 
 **Create a project folder and a venv folder within:**
 ```bash
 >>> mkdir -p detti
 >>> cd detti
->>> python3 -m venv venv
 ```
 
-**Activation the virtual environment:**
+**Clone the source code from Git:**
 ```bash
+>>> git clone https://github.com/milanbalazs/detti_db_server.git
+>>> cd detti_db_server
+```
+
+**Create and activate the virtual environment:**
+```bash
+>>> python3 -m venv venv
 >>> source venv/bin/activate
 ```
 
 **Install the required modules from requirements.txt:**
 ```bash
 >>> pip install -r requirements.txt
+OR
+>>> python setup.py install
 ```
-
-**Clone the source code from Git:**
-```bash
->>> git clone https://github.com/milanbalazs/detti_db_server.git
-```
-
-**Note:**
- - The PyPi package is in progress (The `pip` can be used in future).
 
 ## System
 
@@ -96,6 +112,12 @@ log_level = WARNING
    related to the DB. Other sections are not used in case of DB. It is not problem if other 
    (default) sections are not in the config file.
 
+**Use own config file:**
+ - There is `config_file` argument (`str`) of `DettiDB` class which set the used config file path.
+ - Example:
+   - ```python
+      detti_db = DettiDB(config_file="own_config.ini")
+     ```
 ### Usage
 
 **Import `DettiDB` class from the `detti_db` module:**
