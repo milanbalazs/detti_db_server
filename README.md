@@ -30,6 +30,7 @@
 ## Links
 
 * [PyPi](https://pypi.org/project/detti-db-server/)
+* [GitHub](https://github.com/milanbalazs/detti_db_server)
 
 ## Easy install with PIP
 
@@ -305,6 +306,18 @@ detti_db.get("test_key_2")  # Return: "test_val_2"
 
 Note:
  - The above getter solutions can return any types.
+
+Using default value in get:
+
+```python
+detti_db.get("not_exist_key", default_value=5)  # Return: 5 (Due to the "not_exist_key" key is not in DB.)
+```
+
+:Return: The requested value if it exists in DB else the set default value.
+
+Note:
+ - The above getter solutions can return any types.
+ - Any type can be set as default parameter.
 
 ---
 

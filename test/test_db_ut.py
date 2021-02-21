@@ -164,7 +164,11 @@ class DettiDBTestCases(unittest.TestCase):
         :return: None
         """
 
+        # Test if key is not in DB. None should be returned by method.
         self.assertIsNone(self.detti_db.get("not_exist"))
+
+        # Test default value of get method.
+        self.assertEqual(self.detti_db.get("not_exist", default_value=5), 5)
 
     def test_get_all(self) -> None:
         """
@@ -363,9 +367,11 @@ class DettiDBTestCases(unittest.TestCase):
 
         # True should be returned if the key is in DB.
         self.assertTrue(self.detti_db.is_exist("test_key"))
+        self.assertTrue("test_key" in self.detti_db)
 
         # False should be returned if the key is NOT in DB.
         self.assertFalse(self.detti_db.is_exist("test_key_2"))
+        self.assertFalse("test_key_2" in self.detti_db)
 
 
 if __name__ == "__main__":

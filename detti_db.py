@@ -110,7 +110,17 @@ class DettiDB(object):
         :param key: Name of the key value.
         :return: True if the deleting was successful else False
         """
+
         return self.delete(key)
+
+    def __contains__(self, key: str) -> bool:
+        """
+        Return True if the key is in DB else False.
+        :param key: Name of the key.
+        :return: True if the key is in DB else False.
+        """
+
+        return self.is_exist(key)
 
     def check_config_file(self, config_file_path: str) -> None:
         """
@@ -211,22 +221,28 @@ class DettiDB(object):
             )
             raise unexpected_error
 
-    def get(self, db_key: str) -> Optional[Union[str, int, float]]:
+    def get(self, db_key: str, default_value: Any = None) -> Optional[Union[str, int, float, list]]:
         """
         Providing the value of a key.
         The method returns None if the key doesn't exist in the DB.
         :param db_key: Related key.
+        :param default_value: If the key is not in DB, the default value will be returned.
         :return: The value of the key as a string.
         """
 
         self.c_logger.info("Starting to get the '{}' element.".format(db_key))
 
         try:
-            value_of_key: Union[str, int, float] = self.detti_db[db_key]
+            value_of_key: Union[str, int, float, list] = self.detti_db[db_key]
             self.c_logger.ok("Successfully get the value of '{}': {}".format(db_key, value_of_key))
             return value_of_key
         except KeyError:
             self.c_logger.warning("The '{}' key doesn't exist in the DB.".format(db_key))
+            if default_value:
+                self.c_logger.debug(
+                    "The default value set to '{}'. It will be returned".format(default_value)
+                )
+                return default_value
             return None
         except Exception as unexpected_error:  # pragma: no cover
             self.c_logger.error(
@@ -546,7 +562,11 @@ class DettiDB(object):
 
         with self.lock:
             with open(self.path_of_db, "wt") as opened_db:
-                self.dump_thread: Thread = Thread(target=json.dump, args=(self.detti_db, opened_db))
+                self.dump_thread: Thread = Thread(
+                    target=json.dump,
+                    args=(self.detti_db, opened_db),
+                    kwargs=dict(ensure_ascii=False, indent=4),
+                )
                 self.dump_thread.start()
                 self.dump_thread.join()
 
