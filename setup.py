@@ -25,7 +25,7 @@ def load_requirements(fname):
     return requirements
 
 
-with open("README.md", "r", encoding="utf-8") as f:
+with open(os.path.join(PATH_OF_FILE_DIR, "README.md"), "r", encoding="utf-8") as f:
     long_description = f.read()
 
 setup(
@@ -50,8 +50,12 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: Database",
         "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Typing :: Typed",
+        "Natural Language :: English",
+        "Framework ::  Flask",
     ],
     scripts=["tools/color_logger.py"],
-    package_data={"": ["tools/*.py", "detti_conf.ini"]},
+    package_data={"": ["tools/*.py", "detti_conf.ini", "doc/pics/*"]},
     packages=["."],
 )

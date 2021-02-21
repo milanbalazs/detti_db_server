@@ -73,17 +73,38 @@ C_LOGGER: ColoredLogger = ColoredLogger(os.path.basename(__file__), log_file_pat
 
 
 class DettiDB(object):
-    def __init__(self, config_file: str = DEFAULT_CONFIG, c_logger: ColoredLogger = None) -> None:
+    def __init__(
+        self, config_file: str = DEFAULT_CONFIG, c_logger: ColoredLogger = None, **kwargs
+    ) -> None:
         self.c_logger: ColoredLogger = c_logger if c_logger else self.set_up_default_logger()
-        self.config: configparser.ConfigParser = configparser.ConfigParser()
+        config_data: configparser.ConfigParser = configparser.ConfigParser()
         self.check_config_file(config_file)
-        self.config.read(config_file)
-        self.set_up_default_logger(log_level=self.config.get("DETTI_DB", "log_level"))
-        self.path_of_db: str = os.path.abspath(self.config.get("DETTI_DB", "path_of_db"))
+        config_data.read(config_file)
+        self.set_control_variables(config_data, **kwargs)
+        self.set_up_default_logger(log_level=self.log_level)
+        self.path_of_db: str = os.path.abspath(self.path_of_db)
         self.set_signal_handler()
         self.detti_db: Dict[str, str] = self.load_db()
         self.dump_thread: Optional[Thread] = None
         self.lock: Lock = Lock()
+
+    def set_control_variables(self, config_data: dict, **kwargs) -> None:
+        """
+        Set the control variables.
+        :param config_data: Read config file.
+        :return: None
+        """
+
+        self.c_logger.debug("Starting to set the control variables.")
+
+        # Set the variables based on the provided config file.
+        for key, val in config_data.items("DETTI_DB"):
+            setattr(self, key, val)
+
+        # Overwrite the variables based on the provided kwargs.
+        for key, val in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, val)
 
     def __getitem__(self, key: str) -> Optional[Union[str, int, float]]:
         """
@@ -317,20 +338,16 @@ class DettiDB(object):
             return False
 
         if isinstance(db_key, str) and isinstance(db_value, str):
-            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+            if len(db_key) > int(self.len_of_key):
                 self.c_logger.warning(
                     "The length of key is too long. "
-                    "The value won't be stored! Max. len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_key")
-                    )
+                    "The value won't be stored! Max. len: {}".format(self.len_of_key)
                 )
                 return False
-            elif len(db_value) > self.config.getint("DETTI_DB", "len_of_val"):
+            elif len(db_value) > int(self.len_of_val):
                 self.c_logger.warning(
                     "The length of value is too long. "
-                    "The value won't be stored! Max len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_val")
-                    )
+                    "The value won't be stored! Max len: {}".format(self.len_of_val)
                 )
                 return False
             db_key: str = db_key.strip()
@@ -365,21 +382,17 @@ class DettiDB(object):
             return False
 
         if isinstance(db_key, str) and isinstance(db_value, int):
-            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+            if len(db_key) > int(self.len_of_key):
                 self.c_logger.warning(
                     "The length of key is too long. "
-                    "The value won't be stored! Max. len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_key")
-                    )
+                    "The value won't be stored! Max. len: {}".format(self.len_of_key)
                 )
                 return False
             # TODO: Introduce new parameter to config file about size of integers.
-            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+            elif len(str(db_value)) > int(self.len_of_val):
                 self.c_logger.warning(
                     "The length of value is too long. "
-                    "The value won't be stored! Max len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_val")
-                    )
+                    "The value won't be stored! Max len: {}".format(self.len_of_val)
                 )
                 return False
             db_key: str = db_key.strip()
@@ -415,21 +428,17 @@ class DettiDB(object):
             return False
 
         if isinstance(db_key, str) and isinstance(db_value, float):
-            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+            if len(db_key) > int(self.len_of_key):
                 self.c_logger.warning(
                     "The length of key is too long. "
-                    "The value won't be stored! Max. len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_key")
-                    )
+                    "The value won't be stored! Max. len: {}".format(self.len_of_key)
                 )
                 return False
             # TODO: Introduce new parameter to config file about size of float.
-            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+            elif len(str(db_value)) > int(self.len_of_val):
                 self.c_logger.warning(
                     "The length of value is too long. "
-                    "The value won't be stored! Max len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_val")
-                    )
+                    "The value won't be stored! Max len: {}".format(self.len_of_val)
                 )
                 return False
             db_key: str = db_key.strip()
@@ -465,21 +474,17 @@ class DettiDB(object):
             return False
 
         if isinstance(db_key, str) and isinstance(db_value, list):
-            if len(db_key) > self.config.getint("DETTI_DB", "len_of_key"):
+            if len(db_key) > int(self.len_of_key):
                 self.c_logger.warning(
                     "The length of key is too long. "
-                    "The value won't be stored! Max. len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_key")
-                    )
+                    "The value won't be stored! Max. len: {}".format(self.len_of_key)
                 )
                 return False
             # TODO: Introduce new parameter to config file about size of list.
-            elif len(str(db_value)) > self.config.getint("DETTI_DB", "len_of_val"):
+            elif len(str(db_value)) > int(self.len_of_val):
                 self.c_logger.warning(
                     "The length of value is too long. "
-                    "The value won't be stored! Max len: {}".format(
-                        self.config.getint("DETTI_DB", "len_of_val")
-                    )
+                    "The value won't be stored! Max len: {}".format(self.len_of_val)
                 )
                 return False
             db_key: str = db_key.strip()

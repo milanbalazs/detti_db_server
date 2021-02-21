@@ -119,6 +119,13 @@ log_level = WARNING
    - ```python
       detti_db = DettiDB(config_file="own_config.ini")
      ```
+     
+**Owerwrite config file parameters:**
+ - You can overwrite all config file parameters as instance variables.
+ - Example:
+   - ```python
+      detti_db = DettiDB(len_of_val=50)  # The parameter is set to 100 in config file but it will be overwrite to 50.
+     ```
 ### Usage
 
 **Import `DettiDB` class from the `detti_db` module:**
