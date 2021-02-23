@@ -71,6 +71,16 @@ class DettiDBTestCases(unittest.TestCase):
         self.assertTrue(isinstance(self.detti_db.size_of_db(), int))
         self.assertTrue(self.detti_db.size_of_db() > 0)
 
+    def test_get_number_of_elements(self) -> None:
+        """
+        Testing to get the number of elements of DB.
+        :return: None
+        """
+
+        self.detti_db["test_key"] = "test_val"
+        self.assertTrue(isinstance(self.detti_db.get_number_of_elements(), int))
+        self.assertTrue(self.detti_db.get_number_of_elements() == 1)
+
     def test_exist_db_file(self) -> None:
         """
         Testing the loading an existing DB file

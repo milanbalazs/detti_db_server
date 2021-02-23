@@ -23,6 +23,10 @@ print("test_key -> {}".format(detti_db["test_key"]))
 print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
 print("All content: {}".format(detti_db.get_all()))
+print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
+
+# other
+print("Size of DB: {}".format(detti_db.size_of_db()))
 
 # deletions
 del detti_db["test_key"]
@@ -32,5 +36,6 @@ detti_db.delete("test_key_2")
 detti_db["test_key_3"] = "my_test_val_3"
 detti_db["my_test_key_4"] = "test_val_4"
 
+# Searching
 print("'my_' key prefixes -> {}".format(detti_db.search_keys_in_db("my_")))
 print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))

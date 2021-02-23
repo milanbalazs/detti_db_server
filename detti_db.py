@@ -157,6 +157,20 @@ class DettiDB(object):
 
         return current_size_of_db
 
+    def get_number_of_elements(self) -> int:
+        """
+        Getting the number of elements in the DB.
+        :return: Number of elements in DB as an integer
+        """
+
+        self.c_logger.info("Starting to calculate the number of elements in the DB.")
+
+        elements_in_db: int = len(self.detti_db)
+
+        self.c_logger.ok("The calculated number of elements in the DB: {}".format(elements_in_db))
+
+        return elements_in_db
+
     def check_config_file(self, config_file_path: str) -> None:
         """
         Checking the getting config file.

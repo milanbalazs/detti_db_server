@@ -32,6 +32,7 @@
 * [PyPi](https://pypi.org/project/detti-db-server/)
 * [GitHub](https://github.com/milanbalazs/detti_db_server)
 * [PePy](https://pepy.tech/project/detti-db-server)
+* [Example DB file](examples/db_example_1.py)
 
 ## Easy install with PIP
 
@@ -395,10 +396,29 @@ detti_db.search_values_in_db("my_")  # Return: {'test_key_4': 'my_test_val_4'}
 
 ---
 
+**Get size of DB:**
+
+```python
+detti_db.size_of_db()  # Return: 666 (int)
+```
+
+:Return: Size of the DB is bytes (`int`).
+
+---
+
 **Complete example code (With not existing DB):**
 
 ```python
-from detti_db import DettiDB
+import os
+import sys
+
+# Get the path of the directory of the current file.
+PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
+
+# Append the path of the tools folder to find modules.
+sys.path.append(os.path.join(PATH_OF_FILE_DIR, ".."))
+
+from detti_db import DettiDB  # noqa: E40
 
 detti_db: DettiDB = DettiDB()
 
@@ -414,6 +434,10 @@ print("test_key -> {}".format(detti_db["test_key"]))
 print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
 print("All content: {}".format(detti_db.get_all()))
+print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
+
+# other
+print("Size of DB: {}".format(detti_db.size_of_db()))
 
 # deletions
 del detti_db["test_key"]
@@ -423,6 +447,7 @@ detti_db.delete("test_key_2")
 detti_db["test_key_3"] = "my_test_val_3"
 detti_db["my_test_key_4"] = "test_val_4"
 
+# Searching
 print("'my_' key prefixes -> {}".format(detti_db.search_keys_in_db("my_")))
 print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 ```
@@ -430,11 +455,13 @@ print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 **Output:**
 
 ``` bash
->>> python3 test.py 
+>>> python3 examples/db_example_1.py
 test_key -> test_val
 test_int_key -> 123
 test_list_key -> ['a', 1]
-All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1]}
+All content: {'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1], 'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4', 'test_key': 'test_val', 'test_key_2': 'test_val_2'}
+Number of elements in DB: 7
+Size of DB: 241
 'my_' key prefixes -> {'my_test_key_4': 'test_val_4'}
 'my_' value prefixes -> {'test_key_3': 'my_test_val_3'}
 
@@ -681,15 +708,14 @@ You can run the server on the production line with Nginx and Gunicorn.
  - [How To Serve Flask Applications with Gunicorn and Nginx on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-gunicorn-and-nginx-on-ubuntu-18-04)
 
 ## Future
- - Creating PyPi package
-   - The package can be installed by `pip`
  - Introduce the multithreading/multiprocessing in searching methods
    - In case of big data the multithreading/multiprocessing can reduce the execution time
- - Add support for more data types. 
-   - Currently, the value only can be string as well as the key.
-   - Adding new supported types in case of value: int, list, dict etc...
+ - Add support for more data types on server side.
 
 ## Change log
+
+### 1.1.1
+ - Add `get_number_of_elements` to get number of elements of DB.
 
 ### 1.1.0
  - Get size of DB with `size_of_db()` method.
