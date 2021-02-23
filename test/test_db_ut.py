@@ -61,6 +61,16 @@ class DettiDBTestCases(unittest.TestCase):
         if os.path.isfile(self.detti_db.path_of_db):
             os.remove(self.detti_db.path_of_db)
 
+    def test_size_of_db(self) -> None:
+        """
+        Testing to get the size of DB.
+        :return: None
+        """
+
+        self.detti_db["test_key"] = "test_val"
+        self.assertTrue(isinstance(self.detti_db.size_of_db(), int))
+        self.assertTrue(self.detti_db.size_of_db() > 0)
+
     def test_exist_db_file(self) -> None:
         """
         Testing the loading an existing DB file

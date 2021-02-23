@@ -28,9 +28,12 @@ def load_requirements(fname):
 with open(os.path.join(PATH_OF_FILE_DIR, "README.md"), "r", encoding="utf-8") as f:
     long_description = f.read()
 
+with open(os.path.join(PATH_OF_FILE_DIR, "VERSION"), "r", encoding="utf-8") as f:
+    software_version = f.read()
+
 setup(
     name="detti_db_server",
-    version="0.1.0",
+    version=software_version,
     description="Lightweight Json based key-value DB and/or server.",
     long_description_content_type="text/markdown",
     long_description=long_description,

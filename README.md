@@ -31,6 +31,7 @@
 
 * [PyPi](https://pypi.org/project/detti-db-server/)
 * [GitHub](https://github.com/milanbalazs/detti_db_server)
+* [PePy](https://pepy.tech/project/detti-db-server)
 
 ## Easy install with PIP
 
@@ -687,3 +688,11 @@ You can run the server on the production line with Nginx and Gunicorn.
  - Add support for more data types. 
    - Currently, the value only can be string as well as the key.
    - Adding new supported types in case of value: int, list, dict etc...
+
+## Change log
+
+### 1.1.0
+ - Get size of DB with `size_of_db()` method.
+ - Implement `__contains__` magic method (Eg.: `"a" in detti_db`).
+ - Add `default_value` option to `get` method (Eg.: `detti_db.get("not_exist_key", default_value=5)`)
+ - All parameters from config file can be overwritten as `__init__` argument (Eg.: `detti_db = DettiDB(len_of_val=50)`)

@@ -143,6 +143,20 @@ class DettiDB(object):
 
         return self.is_exist(key)
 
+    def size_of_db(self) -> int:
+        """
+        Return the size of the db in bytes.
+        :return: Size of the db in bytes (int).
+        """
+
+        self.c_logger.info("Starting to calculate the size of DB.")
+
+        current_size_of_db: int = int(os.path.getsize(self.path_of_db))
+
+        self.c_logger.ok("The calculated size of DB: {}".format(current_size_of_db))
+
+        return current_size_of_db
+
     def check_config_file(self, config_file_path: str) -> None:
         """
         Checking the getting config file.
