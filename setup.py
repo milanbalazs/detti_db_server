@@ -1,6 +1,5 @@
 import os
-import setuptools  # noqa
-from distutils.core import setup
+from setuptools import setup
 
 try:
     # for pip >= 10
@@ -56,7 +55,7 @@ setup(
         "Operating System :: Unix",
         "Typing :: Typed",
         "Natural Language :: English",
-        "Framework ::  Flask",
+        "Framework :: Flask",
     ],
     scripts=["tools/color_logger.py"],
     package_data={"": ["tools/*.py", "detti_conf.ini", "doc/pics/*"]},
