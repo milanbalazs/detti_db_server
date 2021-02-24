@@ -41,7 +41,7 @@ import configparser
 import json
 import signal
 from datetime import datetime
-from typing import Dict, Optional, Union, Any
+from typing import Dict, Optional, Union, Any, List
 from threading import Thread, Lock
 
 # Get the path of the directory of the current file.
@@ -106,7 +106,7 @@ class DettiDB(object):
             if hasattr(self, key):
                 setattr(self, key, val)
 
-    def __getitem__(self, key: str) -> Optional[Union[str, int, float]]:
+    def __getitem__(self, key: str) -> Optional[Union[str, int, float, list]]:
         """
         Getting item.
         :param key: Name of the key value.
@@ -156,6 +156,21 @@ class DettiDB(object):
         self.c_logger.ok("The calculated size of DB: {}".format(current_size_of_db))
 
         return current_size_of_db
+
+    def get_all_keys(self) -> List[str]:
+        """
+        Return all keys of the DB in a list.
+        :return: All keys (List[str]).
+        """
+
+        self.c_logger.info("Starting to calculate the keys of DB.")
+
+        keys_of_db: List[str] = [*self.detti_db]
+
+        self.c_logger.debug("The calculated keys of DB: {}".format(keys_of_db))
+        self.c_logger.ok("Successfully get the keys of DB.")
+
+        return keys_of_db
 
     def get_number_of_elements(self) -> int:
         """

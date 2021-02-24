@@ -71,6 +71,22 @@ class DettiDBTestCases(unittest.TestCase):
         self.assertTrue(isinstance(self.detti_db.size_of_db(), int))
         self.assertTrue(self.detti_db.size_of_db() > 0)
 
+    def test_get_all_keys(self) -> None:
+        """
+        Testing to get the all keys of DB.
+        :return: None
+        """
+
+        # Testing empty DB
+        self.assertTrue(isinstance(self.detti_db.get_all_keys(), list))
+        self.assertEqual(self.detti_db.get_all_keys(), [])
+
+        # Testing DB with elements
+        self.detti_db["test_key"] = "test_val"
+        self.detti_db["test_key_2"] = "test_val_2"
+        self.assertTrue(isinstance(self.detti_db.get_all_keys(), list))
+        self.assertEqual(self.detti_db.get_all_keys(), ["test_key", "test_key_2"])
+
     def test_get_number_of_elements(self) -> None:
         """
         Testing to get the number of elements of DB.

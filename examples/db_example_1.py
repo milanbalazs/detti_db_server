@@ -24,9 +24,8 @@ print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
 print("All content: {}".format(detti_db.get_all()))
 print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
-
-# other
 print("Size of DB: {}".format(detti_db.size_of_db()))
+print("All keys in DB: {}".format(detti_db.get_all_keys()))
 
 # deletions
 del detti_db["test_key"]

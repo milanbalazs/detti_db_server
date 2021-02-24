@@ -150,6 +150,7 @@ detti_db = DettiDB()
    - `str`
    - `float`
    - `int`
+   - `list`
 
 ---
 
@@ -166,7 +167,7 @@ detti_db["test_str_key"] = "test_val"  # Set the value as "test_val" (str)
 :Return: `True` if the setting is successful else `False`
 
 Note:
- - If you want to set a non-supported value type, you will get a warning message and
+ - If you want to set a non-supported value type, you will get a warning message, and
    the value won't be store to DB. Eg.:
    - ```python
      detti_db["test_key"] = (1, 2, 3)  # Try to store Tuple type
@@ -406,19 +407,20 @@ detti_db.size_of_db()  # Return: 666 (int)
 
 ---
 
+**Get all keys of DB:**
+
+```python
+detti_db.get_all_keys()  # Return: ["test_key", "test"key_2"] (List[str])
+```
+
+:Return: All keys of the DB (`List[str]`).
+
+---
+
 **Complete example code (With not existing DB):**
 
 ```python
-import os
-import sys
-
-# Get the path of the directory of the current file.
-PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
-
-# Append the path of the tools folder to find modules.
-sys.path.append(os.path.join(PATH_OF_FILE_DIR, ".."))
-
-from detti_db import DettiDB  # noqa: E40
+from detti_db import DettiDB
 
 detti_db: DettiDB = DettiDB()
 
@@ -435,9 +437,8 @@ print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
 print("All content: {}".format(detti_db.get_all()))
 print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
-
-# other
 print("Size of DB: {}".format(detti_db.size_of_db()))
+print("All keys in DB: {}".format(detti_db.get_all_keys()))
 
 # deletions
 del detti_db["test_key"]
@@ -459,12 +460,12 @@ print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 test_key -> test_val
 test_int_key -> 123
 test_list_key -> ['a', 1]
-All content: {'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1], 'test_key_3': 'my_test_val_3', 'my_test_key_4': 'test_val_4', 'test_key': 'test_val', 'test_key_2': 'test_val_2'}
-Number of elements in DB: 7
-Size of DB: 241
+All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1]}
+Number of elements in DB: 5
+Size of DB: 171
+All keys in DB: ['test_key', 'test_key_2', 'test_int_key', 'test_float_key', 'test_list_key']
 'my_' key prefixes -> {'my_test_key_4': 'test_val_4'}
 'my_' value prefixes -> {'test_key_3': 'my_test_val_3'}
-
 ```
 
 ## detti Server (with RESTful API)
@@ -715,7 +716,8 @@ You can run the server on the production line with Nginx and Gunicorn.
 ## Change log
 
 ### 1.1.1
- - Add `get_number_of_elements` to get number of elements of DB.
+ - Add `get_number_of_elements()` method to get number of elements of DB.
+ - Add `get_all_keys()` method to gett all keys of DB.
 
 ### 1.1.0
  - Get size of DB with `size_of_db()` method.
