@@ -121,7 +121,7 @@ log_level = WARNING
    - ```python
       detti_db = DettiDB(config_file="own_config.ini")
      ```
-     
+
 **Owerwrite config file parameters:**
  - You can overwrite all config file parameters as instance variables.
  - Example:
@@ -480,6 +480,17 @@ The configuration file is a standard [INI file format](https://en.wikipedia.org/
 
 **Default config:**
 ```ini
+[DETTI_DB]
+# Path of the DB file. Recommended to define full path.
+path_of_db = test.db
+# Maximum length of the keys in DB (Avoid memory overload).
+len_of_key = 100
+# Maximum length of the values in DB (Avoid memory overload).
+len_of_val = 100
+# Level of the logger. Possible: DEBUG, INFO, WARNING, ERROR, CRITICAL
+# IMPORTANT: The generated log file will contain all log level messages!
+log_level = WARNING
+
 [SERVER]
 host = localhost
 port = 5000
@@ -496,9 +507,15 @@ password =
 ```
 **Note:**
  - The default `detti_conf.ini` file contains more sections but the `SERVER` and `DETTI_DB` 
-   sections are related to the Server running. 
+   sections are related (and mandatory) to the Server running. 
    Other sections are not used in case of DB. It is not problem if other 
    (default) sections are not in the config file.
+
+**Use own config file:**
+ - There is `config_file` CLI argument (`str`).
+   - Force to use a config file. Default: `detti_conf.ini` (In root folder)
+ - Example:
+   - `>>> python3 detti_server --config_file my_own_config.ini`
 
 ### Usage
 
@@ -717,7 +734,7 @@ You can run the server on the production line with Nginx and Gunicorn.
 
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.
- - Add `get_all_keys()` method to gett all keys of DB.
+ - Add `get_all_keys()` method to get all keys of DB.
 
 ### 1.1.0
  - Get size of DB with `size_of_db()` method.
