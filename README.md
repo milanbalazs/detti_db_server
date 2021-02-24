@@ -539,14 +539,24 @@ password =
  * Debugger PIN: 217-599-780
 
 ```
+---
+
 ### Test server status
 
 The server status can be checked to send a GET request to `/ping` end-point of the server.
 
 Response if the server is up and running:
+
+Curl:
 ```bash
 >>> curl http://localhost:5000/ping
 > "PONG"
+```
+
+Python:
+```python
+import requests
+requests.get("http://localhost:5000/ping")  # Return: "PONG"
 ```
 
 Response if the server is down (Status code: 7):
@@ -555,13 +565,15 @@ Response if the server is down (Status code: 7):
 > curl: (7) Failed to connect to localhost port 5000: Kapcsolat elutasítva
 ```
 
+---
+
 ### End-points (RESTful APIs)
 
 **`/get/<string:db_key>`**
 
 Providing the key-value pair based on getting key. The status code is 201 in case of error.
 
-Example:
+Curl:
 ```bash
 >>> curl http://localhost:5000/set -d "exist=value_of_exist_key" -X PUT
 > {"STATUS": "OK"}
@@ -570,24 +582,53 @@ Example:
 >>> curl http://localhost:5000/get/doesnt_exist
 > {"doesnt_exist": "The key doesn't exist in DB."}
 ```
+
+Python:
+```python
+import requests
+
+# Set an element in the DB
+put_resp = requests.put("http://localhost:5000/set", data={"exist": "value_of_exist_key"})
+print(put_resp.json())  # Return: {"STATUS": "OK"}
+
+# Get the element from DB
+resp = requests.get("http://localhost:5000/get/exist")
+print(resp.json())  # Return: {"exist": "value_of_exist_key"}
+```
 ---
+
 **`/set`**
 
 Setting/updating key-value pair in the DB.
 
-Example:
+Curl:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
 > {"STATUS": "OK"}
 >>> curl http://localhost:5000/get/test_key
 > {"test_key": "test_val"}
 ```
+
+Python:
+```python
+import requests
+
+# Set an element in the DB
+put_resp = requests.put("http://localhost:5000/set", data={"test_key": "test_val"})
+print(put_resp.json())  # Return: {"STATUS": "OK"}
+
+# Get the element from DB
+resp = requests.get("http://localhost:5000/get/test_key")
+print(resp.json())  # Return: {"test_key": "test_val"}
+```
+
 ---
+
 **`/search_key/<string:key_prefix>`**
 
 Searching keys in the DB based on provided key prefix.
 
-Example:
+Curl:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
 >  {"STATUS": "OK"}
@@ -603,12 +644,32 @@ Example:
 >>> curl http://localhost:5000/search_key/not_exist
 >  {"not_exist": "Cannot find keys for prefix"}
 ```
+
+Python:
+```python
+import requests
+
+# Set some elements in DB.
+requests.put("http://localhost:5000/set", data={"dev_data": "dev"})
+requests.put("http://localhost:5000/set", data={"prod_key_1": "prod_val_1"})
+requests.put("http://localhost:5000/set", data={"prod_key_2": "prod_val_2"})
+
+# Get the elements based on provided KEY prefix.
+resp = requests.get("http://localhost:5000/search_key/prod_")
+print(resp.json())  # Return: {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"}
+
+# Try a KEY prefix which is not contained in keys.
+resp = requests.get("http://localhost:5000/search_key/nonono")
+print(resp.json())  # Return: {"nonono": "Cannot find keys for prefix"}
+```
+
 ---
+
 **`/search_val/<string:value_prefix>`**
 
 Searching values in the DB based on provided value prefix.
 
-Example:
+Curl:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
 >  {"STATUS": "OK"}
@@ -624,12 +685,32 @@ Example:
 >>> curl http://localhost:5000/search_val/not_exist
 > {"not_exist": "Cannot find values for prefix"}
 ```
+
+Python:
+```python
+import requests
+
+# Set some elements in DB.
+requests.put("http://localhost:5000/set", data={"dev_data": "dev"})
+requests.put("http://localhost:5000/set", data={"prod_key_1": "prod_val_1"})
+requests.put("http://localhost:5000/set", data={"prod_key_2": "prod_val_2"})
+
+# Get the elements based on provided VALUE prefix.
+resp = requests.get("http://localhost:5000/search_val/prod_")
+print(resp.json())  # Return: {"prod_key_1": "prod_val_1", "prod_key_2": "prod_val_2"}
+
+# Try a VALUE prefix which is not contained in keys.
+resp = requests.get("http://localhost:5000/search_val/nonono")
+print(resp.json())  # Return: {"nonono": "Cannot find values for prefix"}
+```
+
 ---
+
 **`/delete/<string:db_key>`**
 
 Deleting an element from the DB.
 
-Example:
+Curl:
 ```bash
 >> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
 > {"STATUS": "OK"}
@@ -640,7 +721,26 @@ Example:
 >> curl http://localhost:5000/get/test_key
 > {"test_key": "The key doesn't exist in DB."}
 ```
+
+Python:
+```python
+import requests
+
+# Set some elements in DB.
+requests.put("http://localhost:5000/set", data={"to_be_deleted": "dummy"})
+
+# Delete the created item
+del_resp = requests.delete("http://localhost:5000/delete/to_be_deleted")
+print(del_resp.json())  # Return: {"STATUS": "OK"}
+
+# Try to get the deleted item
+resp = requests.get("http://localhost:5000/get/to_be_deleted")
+print(resp.status_code)  # Return: 201
+print(resp.json())  # Return: {"to_be_deleted": "The key doesn't exist in DB."}
+```
+
 ---
+
 **`/ping`**
 
 Checking if the server is running.
@@ -650,17 +750,20 @@ Success example:
 >>> curl http://localhost:5000/ping
 > "PONG"
 ```
+
 Failed example (Status code: 7):
 ```bash
 >>> curl http://localhost:5000/ping
 > curl: (7) Failed to connect to localhost port 5000: Kapcsolat elutasítva
 ```
+
 ---
+
 **`/getall`**
 
 Providing all elements from the DB. {key: value, key: value}
 
-Example:
+Curl:
 ```bash
 >>> curl http://localhost:5000/set -d "test_key=test_val" -X PUT
 > {"STATUS": "OK"}
@@ -671,6 +774,19 @@ Example:
         "test_key": "test_val",
         "test_key_1": "test_val_1"
   }
+```
+
+Python:
+```python
+import requests
+
+# Set some elements in DB.
+requests.put("http://localhost:5000/set", data={"get_all_1": "dummy"})
+requests.put("http://localhost:5000/set", data={"get_all_2": "dummy"})
+
+# Getting all elements from DB.
+resp = requests.get("http://localhost:5000/getall")
+print(resp.json()) # Return: {"get_all_1": "dummy", "get_all_2": "dummy"}
 ```
 
 ### JWT Authentication
