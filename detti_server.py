@@ -487,9 +487,26 @@ def run_server(
     port=config.get("SERVER", "port"),
     debug=config.getboolean("SERVER", "debug"),
     threaded=True,
-):
+    **options,
+) -> None:
+    """
+    Starting the server.
+    :param host: The hostname to listen on. Set this to ``'0.0.0.0'`` to
+                    have the server available externally as well. Defaults to
+                    ``'127.0.0.1'`` or the host in the ``SERVER_NAME`` config variable
+                    if present.
+    :param port: The port of the webserver. Defaults to ``5000`` or the
+                    port defined in the ``SERVER_NAME`` config variable if present.
+    :param debug: If given, enable or disable debug mode. See
+    :param threaded: Should the process handle each request in a separate thread?
+    :param options: The options to be forwarded to the underlying Werkzeug
+                        server. See :func:`werkzeug.serving.run_simple` for more
+                        information.
+    :return: None
+    """
+
     app.run(
-        host=host, port=port, debug=debug, threaded=threaded,
+        host=host, port=port, debug=debug, threaded=threaded, **options,
     )
 
 

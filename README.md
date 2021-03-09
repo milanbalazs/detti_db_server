@@ -32,7 +32,8 @@
 * [PyPi](https://pypi.org/project/detti-db-server/)
 * [GitHub](https://github.com/milanbalazs/detti_db_server)
 * [PePy](https://pepy.tech/project/detti-db-server)
-* [Example DB file](examples/db_example_1.py)
+* [Example DB usage file](examples/db_example_1.py)
+* [Example Server usage file](examples/server_example_1.py)
 
 ## Easy install with PIP
 
@@ -880,6 +881,9 @@ You can run the server on the production line with Nginx and Gunicorn.
 ## Change log
 
 ### 1.1.2
+ - Pass the `**options` parameter in `run_server()` function.
+   - The options to be forwarded to the underlying Werkzeug server.
+     See :func:`werkzeug.serving.run_simple` for more information.
 
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.

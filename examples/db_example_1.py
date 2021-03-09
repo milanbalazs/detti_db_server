@@ -7,7 +7,7 @@ PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
 # Append the path of the tools folder to find modules.
 sys.path.append(os.path.join(PATH_OF_FILE_DIR, ".."))
 
-from detti_db import DettiDB  # noqa: E40
+from detti_db import DettiDB  # noqa: E402
 
 detti_db: DettiDB = DettiDB()
 
