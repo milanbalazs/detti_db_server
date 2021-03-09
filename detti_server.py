@@ -473,6 +473,7 @@ class GetAll(Resource):
         return detti_db.get_all()
 
 
+# Add end-point
 api.add_resource(GetItem, "/get/<string:db_key>")
 api.add_resource(SetItem, "/set")
 api.add_resource(SearchKeys, "/search_key/<string:key_prefix>")
@@ -506,7 +507,11 @@ def run_server(
     """
 
     app.run(
-        host=host, port=port, debug=debug, threaded=threaded, **options,
+        host=host,
+        port=port,
+        debug=debug,
+        threaded=threaded,
+        **options,
     )
 
 
