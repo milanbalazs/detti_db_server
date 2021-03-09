@@ -879,6 +879,8 @@ You can run the server on the production line with Nginx and Gunicorn.
 
 ## Change log
 
+### 1.1.2
+
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.
  - Add `get_all_keys()` method to get all keys of DB.
