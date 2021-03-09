@@ -294,6 +294,24 @@ Note:
 
 ---
 
+**Key: `str`, Value: `dict`:**
+
+With dictionary like solution:
+
+```python
+detti_db["test_dict_key"] = {"a": 1}  # Set the value as {"a": 1} (dict)
+```
+
+:Return: `True` if the setting is successful else `False`
+
+With method usage:
+
+```python
+detti_db.set_dict("test_dict_key_2", {"a": 1})  # Set the value as {"a": 1} (dict)
+```
+
+---
+
 :arrow_right: **Getters:**
 
 **Get element**
@@ -420,7 +438,16 @@ detti_db.get_all_keys()  # Return: ["test_key", "test"key_2"] (List[str])
 **Complete example code (With not existing DB):**
 
 ```python
-from detti_db import DettiDB
+import os
+import sys
+
+# Get the path of the directory of the current file.
+PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
+
+# Append the path of the tools folder to find modules.
+sys.path.append(os.path.join(PATH_OF_FILE_DIR, ".."))
+
+from detti_db import DettiDB  # noqa: E40
 
 detti_db: DettiDB = DettiDB()
 
@@ -430,11 +457,13 @@ detti_db.set("test_key_2", "test_val_2")
 detti_db.set_int("test_int_key", 123)
 detti_db.set_float("test_float_key", 123.123)
 detti_db.set_list("test_list_key", ["a", 1])
+detti_db.set_dict("test_dict_key", {"b": 2})
 
 # getters
 print("test_key -> {}".format(detti_db["test_key"]))
 print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
+print("test_dict_key -> {}".format(detti_db["test_dict_key"]))
 print("All content: {}".format(detti_db.get_all()))
 print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
 print("Size of DB: {}".format(detti_db.size_of_db()))
@@ -460,12 +489,14 @@ print("'my_' value prefixes -> {}".format(detti_db.search_values_in_db("my_")))
 test_key -> test_val
 test_int_key -> 123
 test_list_key -> ['a', 1]
-All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1]}
-Number of elements in DB: 5
-Size of DB: 171
-All keys in DB: ['test_key', 'test_key_2', 'test_int_key', 'test_float_key', 'test_list_key']
+test_dict_key -> {'b': 2}
+All content: {'test_key': 'test_val', 'test_key_2': 'test_val_2', 'test_int_key': 123, 'test_float_key': 123.123, 'test_list_key': ['a', 1], 'test_dict_key': {'b': 2}}
+Number of elements in DB: 6
+Size of DB: 216
+All keys in DB: ['test_key', 'test_key_2', 'test_int_key', 'test_float_key', 'test_list_key', 'test_dict_key']
 'my_' key prefixes -> {'my_test_key_4': 'test_val_4'}
 'my_' value prefixes -> {'test_key_3': 'my_test_val_3'}
+
 ```
 
 ## detti Server (with RESTful API)
@@ -794,7 +825,6 @@ print(resp.json()) # Return: {"get_all_1": "dummy", "get_all_2": "dummy"}
 Official page of JWT:
  - [JSON Web Tokens](https://jwt.io)
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)
 **Important:**
  - The JWT authentication is not active with the default configuration.
 
@@ -851,6 +881,10 @@ You can run the server on the production line with Nginx and Gunicorn.
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.
  - Add `get_all_keys()` method to get all keys of DB.
+ - Add `set_dict()` method as `dict` type setter.
+ - Add `run_server()` function to server part for better integration.
+   - Now the `detti_server.py` file can be imported and configurable before starting the server.
+   - Eg.: `import detti_server; detti_server.run_server()`
 
 ### 1.1.0
  - Get size of DB with `size_of_db()` method.

@@ -17,11 +17,13 @@ detti_db.set("test_key_2", "test_val_2")
 detti_db.set_int("test_int_key", 123)
 detti_db.set_float("test_float_key", 123.123)
 detti_db.set_list("test_list_key", ["a", 1])
+detti_db.set_dict("test_dict_key", {"b": 2})
 
 # getters
 print("test_key -> {}".format(detti_db["test_key"]))
 print("test_int_key -> {}".format(detti_db.get("test_int_key")))
 print("test_list_key -> {}".format(detti_db["test_list_key"]))
+print("test_dict_key -> {}".format(detti_db["test_dict_key"]))
 print("All content: {}".format(detti_db.get_all()))
 print("Number of elements in DB: {}".format(detti_db.get_number_of_elements()))
 print("Size of DB: {}".format(detti_db.size_of_db()))

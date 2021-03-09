@@ -106,7 +106,7 @@ class DettiDB(object):
             if hasattr(self, key):
                 setattr(self, key, val)
 
-    def __getitem__(self, key: str) -> Optional[Union[str, int, float, list]]:
+    def __getitem__(self, key: str) -> Optional[Union[str, int, float, list, dict]]:
         """
         Getting item.
         :param key: Name of the key value.
@@ -115,7 +115,7 @@ class DettiDB(object):
 
         return self.get(key)
 
-    def __setitem__(self, key: str, value: Union[str, int, float, list]) -> bool:
+    def __setitem__(self, key: str, value: Union[str, int, float, list, dict]) -> bool:
         """
         Setting an item in the DB.
         :param key: Name of the key value.
@@ -285,7 +285,9 @@ class DettiDB(object):
             )
             raise unexpected_error
 
-    def get(self, db_key: str, default_value: Any = None) -> Optional[Union[str, int, float, list]]:
+    def get(
+        self, db_key: str, default_value: Any = None
+    ) -> Optional[Union[str, int, float, list, dict]]:
         """
         Providing the value of a key.
         The method returns None if the key doesn't exist in the DB.
@@ -331,7 +333,7 @@ class DettiDB(object):
         self.c_logger.ok("The DB has content and it's returned.")
         return self.detti_db
 
-    def _set(self, db_key: str, db_value: Union[str, int, float, list]) -> bool:
+    def _set(self, db_key: str, db_value: Union[str, int, float, list, dict]) -> bool:
         """
         Decide what type of setting is needed and call the proper method.
         :param db_key: Key of the item.
@@ -535,6 +537,44 @@ class DettiDB(object):
             self.dump_json()
             self.c_logger.ok(
                 "'{}:{}' list key-value pair has been stored successfully.".format(db_key, db_value)
+            )
+            return True
+        else:
+            self.c_logger.warning("The key is not string! The value won't be stored!")
+            return False
+
+    def set_dict(self, db_key: str, db_value: dict) -> bool:
+        """
+        Setting a new dict item in the DB.
+        :param db_key: Key of the item.
+        :param db_value: Value of the key.
+        :return: True if the operation is success else False.
+        """
+
+        self.c_logger.info(
+            "Starting to set the '{}:{}' list key-value pair".format(db_key, db_value)
+        )
+
+        try:
+            self.c_logger.debug("Try to convert the getting value to dict.")
+            db_value: dict = dict(db_value)
+        except TypeError:
+            self.c_logger.warning("The value is not dict and it cannot be casted to dict.")
+            return False
+
+        if isinstance(db_key, str) and isinstance(db_value, dict):
+            if len(db_key) > int(self.len_of_key):
+                self.c_logger.warning(
+                    "The length of key is too long. "
+                    "The value won't be stored! Max. len: {}".format(self.len_of_key)
+                )
+                return False
+            # TODO: Introduce new parameter to config file about size of dict.
+            db_key: str = db_key.strip()
+            self.detti_db[db_key]: dict = db_value
+            self.dump_json()
+            self.c_logger.ok(
+                "'{}:{}' dict key-value pair has been stored successfully.".format(db_key, db_value)
             )
             return True
         else:

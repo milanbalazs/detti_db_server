@@ -329,6 +329,26 @@ class DettiDBTestCases(unittest.TestCase):
         # Testing if key is not string
         self.assertFalse(self.detti_db.set_list(678, ["a", 6]))
 
+    def test_set_dict(self) -> None:
+        """
+        Testing to set a dict value in DB.
+        :return: None
+        """
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_dict("test_dict_val", {"a": 1}))
+        self.assertEqual(self.detti_db.get("test_dict_val"), {"a": 1})
+
+        # Testing the too long key
+        self.assertFalse(self.detti_db.set_dict("x" * 101, {"a": 2}))
+
+        # Testing TypeError (in value)
+        self.assertFalse(self.detti_db.set_dict("invalid_type", 5))
+        self.assertIsNone(self.detti_db.get("invalid_type"))
+
+        # Testing if key is not string
+        self.assertFalse(self.detti_db.set_dict(678, {"a": 6}))
+
     def test_delete(self) -> None:
         """
         Testing the delete method.

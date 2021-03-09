@@ -481,8 +481,20 @@ api.add_resource(DeleteItem, "/delete/<string:db_key>")
 api.add_resource(PingServer, "/ping")
 api.add_resource(GetAll, "/getall")
 
-if __name__ == "__main__":
+
+def run_server(
+    host=config.get("SERVER", "host"),
+    port=config.get("SERVER", "port"),
+    debug=config.getboolean("SERVER", "debug"),
+    threaded=True,
+):
     app.run(
+        host=host, port=port, debug=debug, threaded=threaded,
+    )
+
+
+if __name__ == "__main__":
+    run_server(
         host=config.get("SERVER", "host"),
         port=config.get("SERVER", "port"),
         debug=config.getboolean("SERVER", "debug"),
