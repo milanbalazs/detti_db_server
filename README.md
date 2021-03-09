@@ -151,6 +151,7 @@ detti_db = DettiDB()
    - `float`
    - `int`
    - `list`
+   - `dict`
 
 ---
 
