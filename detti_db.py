@@ -242,7 +242,7 @@ class DettiDB(object):
         else:
             self.c_logger.ok("The directory structure of DB file exist.")
 
-    def load_db(self) -> Dict[str, str]:
+    def load_db(self) -> Dict[str, Any]:
         """
         Loading the DB based on the provided confing file.
         If the DB doesn't exist the method creates it.
@@ -264,7 +264,7 @@ class DettiDB(object):
             return {}
         self.c_logger.debug("The DB file exists.")
         try:
-            loaded_db: Dict[str, str] = json.load(open(self.path_of_db, "rt"))
+            loaded_db: Dict[str, Any] = json.load(open(self.path_of_db, "rt"))
             self.c_logger.ok("The '{}' DB has been loaded.".format(self.path_of_db))
             return loaded_db
         except ValueError as val_error:
@@ -641,15 +641,56 @@ class DettiDB(object):
         self.dump_json()
         self.c_logger.ok("The DB has been cleared successfully.")
 
-    def dump_json(self) -> None:
+    def dump_to_json(self, file_path: str, force: bool = False, permissions: int = 0o600) -> bool:
+        """
+        Dump the current DB to other Json file.
+        :param file_path: Path of the destination file.
+        :param force: If it is given the existing file will be overwritten.
+                        Default: False
+        :param permissions: Set the permission of file. It is true for overwritten files! Octal!
+                                Default: 0o600
+        :return: True if success else False
+        """
+
+        if os.path.isfile(file_path):
+            if not force:
+                self.c_logger.warning(
+                    "The '{}' file exist and 'force' parameter is NOT set. Do nothing!".format(
+                        file_path
+                    )
+                )
+                return False
+            self.c_logger.info(
+                "The '{}' file exist and 'force' parameter is set. "
+                "The file will be overwritten!".format(file_path)
+            )
+        else:
+            self.c_logger.info(
+                "The '{}' file doesn't exist. Trying to create it!".format(file_path)
+            )
+            # Creating the directory structure in it is not existing
+            self.__creating_dir_structure_for_file(file_path)
+            # Creating new DB if it is not exist
+            with open(file_path, "w"):
+                # Only the owner has permissions for DB file
+                os.chmod(file_path, permissions)
+            self.c_logger.ok("The new '{}' Json file has been created.".format(file_path))
+
+        self.dump_json(file_path)
+
+    def dump_json(self, file_path: str = None) -> None:
         """
         Dump the dict object to the Json file in case of DB changing.
         It is performed on multithreading.
+        :param file_path: Path of the DB file.
         :return: None
         """
 
+        if not file_path:
+            file_path = self.path_of_db
+
         with self.lock:
-            with open(self.path_of_db, "wt") as opened_db:
+            with open(file_path, "wt") as opened_db:
                 self.dump_thread: Thread = Thread(
                     target=json.dump,
                     args=(self.detti_db, opened_db),

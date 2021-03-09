@@ -437,6 +437,26 @@ detti_db.get_all_keys()  # Return: ["test_key", "test"key_2"] (List[str])
 
 ---
 
+**Dump the current loaded DB to Json file:**
+
+```python
+detti_db.dump_to_json("dump.json")
+```
+
+Possible parameters:
+ - `file_path`: Path of the destination file.
+ - `force`: If it is given the existing file will be overwritten.
+   - Default: False
+ - `permissions`: Set the permission of file. It is true for overwritten files! Octal!
+   - Default: 0o600
+
+Eg.:
+```python
+detti_db.dump_to_json(file_path="dump.json", force=True, permissions=0o664)
+```
+
+---
+
 **Complete example code (With not existing DB):**
 
 ```python
@@ -884,6 +904,7 @@ You can run the server on the production line with Nginx and Gunicorn.
  - Pass the `**options` parameter in `run_server()` function.
    - The options to be forwarded to the underlying Werkzeug server.
      See :func:`werkzeug.serving.run_simple` for more information.
+ - Add the `dump_to_json()` method to dump the current DB to Json file.
 
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.

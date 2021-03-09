@@ -5,7 +5,7 @@ import shutil
 import json
 import warnings
 from random import randint
-from typing import Optional
+from typing import Optional, Dict, Any
 
 sys.path.append(os.path.join(os.path.realpath(os.path.dirname(__file__)), ".."))
 
@@ -39,6 +39,8 @@ class DettiDBTestCases(unittest.TestCase):
                 os.path.realpath(os.path.dirname(__file__)), "detti_conf_ut.ini"
             )
         )
+        # A test Json file
+        self.tmp_json_path: str = "unit_test_json_file.json"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -60,6 +62,8 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db._clear_db()
         if os.path.isfile(self.detti_db.path_of_db):
             os.remove(self.detti_db.path_of_db)
+        if os.path.isfile(self.tmp_json_path):
+            os.remove(self.tmp_json_path)
 
     def test_size_of_db(self) -> None:
         """
@@ -348,6 +352,46 @@ class DettiDBTestCases(unittest.TestCase):
 
         # Testing if key is not string
         self.assertFalse(self.detti_db.set_dict(678, {"a": 6}))
+
+    def test_dump_json(self) -> None:
+        """
+        Testing to dump the DB to Json.
+        :return: None
+        """
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_dict("test_dict_val", {"a": 1}))
+        self.assertEqual(self.detti_db.get("test_dict_val"), {"a": 1})
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_list("test_list_val", ["a", 1]))
+        self.assertEqual(self.detti_db.get("test_list_val"), ["a", 1])
+
+        # Testing correct setting
+        self.assertTrue(self.detti_db.set_float("test_float_val", 666.666))
+        self.assertEqual(self.detti_db.get("test_float_val"), 666.666)
+
+        self.detti_db.dump_to_json(self.tmp_json_path)
+        file_permissions: str = oct(os.stat(self.tmp_json_path).st_mode & 0o777)
+        self.assertEqual(file_permissions, "0o600")
+
+        self.assertTrue(os.path.isfile(self.tmp_json_path))
+        loaded_json: Dict[str, Any] = json.load(open(self.tmp_json_path, "rt"))
+        self.assertTrue("test_dict_val" in loaded_json)
+        self.assertTrue("test_list_val" in loaded_json)
+        self.assertTrue("test_float_val" in loaded_json)
+
+        self.detti_db.delete("test_float_val")
+
+        # Testing the NOT overwrite
+        self.assertFalse(self.detti_db.dump_to_json(self.tmp_json_path))
+        loaded_json: Dict[str, Any] = json.load(open(self.tmp_json_path, "rt"))
+        self.assertTrue("test_float_val" in loaded_json)
+
+        # Testing the overwrite
+        self.assertFalse(self.detti_db.dump_to_json(self.tmp_json_path, force=True))
+        loaded_json: Dict[str, Any] = json.load(open(self.tmp_json_path, "rt"))
+        self.assertFalse("test_float_val" in loaded_json)
 
     def test_delete(self) -> None:
         """
