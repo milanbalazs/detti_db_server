@@ -6,3 +6,4 @@ coverage==5.4
 pycodestyle==2.6.0
 requests==2.25.1
 Flask-JWT==0.3.2
+pre-commit==2.11.0
