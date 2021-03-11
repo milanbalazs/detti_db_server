@@ -905,6 +905,9 @@ You can run the server on the production line with Nginx and Gunicorn.
    - The options to be forwarded to the underlying Werkzeug server.
      See :func:`werkzeug.serving.run_simple` for more information.
  - Add the `dump_to_json()` method to dump the current DB to Json file.
+ - Add `Python Black` and `Flake8` pre-commit hooks to repo for better contributions.
+ - Fix TypeError in case of `dict` type setting.
+ - Add Cross Origin Resource Sharing (CORS) for server to make cross-origin AJAX possible.
 
 ### 1.1.1
  - Add `get_number_of_elements()` method to get number of elements of DB.

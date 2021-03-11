@@ -105,6 +105,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
+from flask_cors import CORS
 
 # Get the path of the directory of the current file.
 PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
@@ -115,6 +116,7 @@ sys.path.append(PATH_OF_FILE_DIR)
 from detti_db import DettiDB  # noqa: E402
 
 app: Flask = Flask(__name__)
+CORS(app)
 api: Api = Api(app)
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter, description=__doc__)
