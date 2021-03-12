@@ -355,6 +355,8 @@ class DettiDB(object):
             self.set_float(db_key, db_value)
         elif isinstance(db_value, list):
             self.set_list(db_key, db_value)
+        elif isinstance(db_value, dict):
+            self.set_dict(db_key, db_value)
         else:
             self.c_logger.warning(
                 "The getting value type is not supported ({}). "
