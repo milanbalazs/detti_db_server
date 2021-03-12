@@ -145,7 +145,7 @@ class DettiDBTestCases(unittest.TestCase):
         self.detti_db[12234] = 9876
         self.assertIsNone(self.detti_db[12234])
 
-        self.detti_db["test_invalid_val"] = {"asf": 123}
+        self.detti_db["test_invalid_val"] = {"asf", 123}
         self.assertIsNone(self.detti_db["test_invalid_val"])
 
     def test_load_db(self) -> None:
