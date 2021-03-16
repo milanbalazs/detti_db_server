@@ -900,6 +900,9 @@ You can run the server on the production line with Nginx and Gunicorn.
 
 ## Change log
 
+### 1.3.1
+ - Placeholder
+
 ### 1.2.1
  - Pass the `**options` parameter in `run_server()` function.
    - The options to be forwarded to the underlying Werkzeug server.
