@@ -48,10 +48,16 @@ from threading import Thread, Lock
 PATH_OF_FILE_DIR: str = os.path.realpath(os.path.dirname(__file__))
 
 # Append the path of the tools folder to find modules.
+sys.path.append(PATH_OF_FILE_DIR)
 sys.path.append(os.path.join(PATH_OF_FILE_DIR, "tools"))
 
 # Import own modules.
 from color_logger import ColoredLogger  # noqa: E402
+
+with open(os.path.join(PATH_OF_FILE_DIR, "VERSION"), "r", encoding="utf-8") as f:
+    software_version: str = f.read()
+
+__version__: str = software_version
 
 # Set the default configuration file of the DB.
 DEFAULT_CONFIG: str = os.path.join(PATH_OF_FILE_DIR, "detti_conf.ini")

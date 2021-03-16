@@ -115,6 +115,11 @@ sys.path.append(PATH_OF_FILE_DIR)
 
 from detti_db import DettiDB  # noqa: E402
 
+with open(os.path.join(PATH_OF_FILE_DIR, "VERSION"), "r", encoding="utf-8") as f:
+    software_version: str = f.read()
+
+__version__: str = software_version
+
 app: Flask = Flask(__name__)
 CORS(app)
 api: Api = Api(app)
