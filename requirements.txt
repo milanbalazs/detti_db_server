@@ -4,7 +4,7 @@ Flask_RESTful==0.3.8
 Werkzeug==2.2.3
 coverage==5.4
 pycodestyle==2.6.0
-requests==2.25.1
+requests==2.31.0
 Flask-JWT==0.3.2
 pre-commit==2.11.0
 Flask-Cors==3.0.10
